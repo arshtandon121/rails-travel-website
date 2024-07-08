@@ -1,0 +1,66 @@
+<div class="payment-pending-container">
+  <div class="payment-pending-content">
+    <h1>Payment Processing</h1>
+    <div class="spinner"></div>
+    <p>Your payment is being processed. This usually takes just a few moments.</p>
+    <p>Please do not close this window or refresh the page.</p>
+    <p class="status-update">We'll update you shortly...</p>
+    <p class="email-notice">A confirmation email will be sent to you once the payment is complete.</p>
+  </div>
+</div>
+
+<style>
+  .payment-pending-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f7f7f7;
+  }
+
+  .payment-pending-content {
+    text-align: center;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+  }
+
+  h1 {
+    color: #333;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+
+  .status-update {
+    font-weight: bold;
+    color: #4a4a4a;
+    margin-top: 1rem;
+  }
+
+  .email-notice {
+    font-size: 0.9rem;
+    color: #888;
+    margin-top: 1rem;
+  }
+
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 1rem auto;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>

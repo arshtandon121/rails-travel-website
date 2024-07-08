@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  email: MyString
+  phone: MyString
+  camp: one
+  camp_confirmation: false
+  payment_confirmation: false
+  payment: one
+  user: one
+
+two:
+  name: MyString
+  email: MyString
+  phone: MyString
+  camp: two
+  camp_confirmation: false
+  payment_confirmation: false
+  payment: two
+  user: two

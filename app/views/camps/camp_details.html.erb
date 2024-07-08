@@ -1,0 +1,452 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= @camp.name %> Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+    <style>
+
+    .swal2-popup {
+        font-size: 0.8rem;
+    }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+        }
+        .camp-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .camp-details, .purchase-box {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        .camp-details:hover, .purchase-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+        }
+        .btn-purchase {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+        .btn-purchase:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        .camp-rating {
+            font-size: 24px;
+            color: #FFC107;
+        }
+        .feature-item {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 15px;
+            background-color: #e9ecef;
+            border-radius: 20px;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        .feature-item:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .quantity-input {
+            width: 120px;
+        }
+        .quantity-input button {
+            border: none;
+            background-color: #f8f9fa;
+            color: #4CAF50;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .quantity-input button:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .datepicker {
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="camp-image-slider mb-4">
+                    <% @camp.camp_pic.each do |pic| %>
+                        <img src="<%= pic %>" class="camp-image" alt="<%= @camp.name %>">
+                    <% end %>
+                </div>
+
+                <div class="camp-details">
+                    <h1 class="mb-4"><%= @camp.name %></h1>
+                    <div class="camp-info mb-4">
+                        <span class="camp-duration"><i class="fas fa-clock"></i> <%= @camp.camp_duration %></span>
+                        <span class="camp-rating">
+                            <%= "★" * @camp.rating.to_i %><%= "☆" * (5 - @camp.rating.to_i) %> <%= @camp.rating %>
+                        </span>
+                    </div>
+                    <p><i class="fas fa-map-marker-alt"></i> <%= @camp.location %></p>
+                    
+                    <h3 class="mt-4 mb-3">Sharing Options</h3>
+                    <% ["Double", "Triple", "Quad", "Six"].each do |sharing| %>
+                        <div class="sharing-option mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>
+                                    <%= sharing %> Sharing
+                                    <span id="<%= sharing.downcase %>-price" class="text-primary"></span>
+                                    <span class="per-person-price text-muted" id="<%= sharing.downcase %>-per-person"></span>
+                                </span>
+                                <div class="quantity-input">
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="changeQuantity('<%= sharing.downcase %>', -1)">-</button>
+                                    <input type="number" id="<%= sharing.downcase %>-sharing" name="<%= sharing.downcase %>_sharing" value="0" min="0" class="form-control form-control-sm d-inline-block w-50 text-center">
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="changeQuantity('<%= sharing.downcase %>', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    <% end %>
+                    
+                    <div class="dates mt-4">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="check-in-date">Check-in Date</label>
+                                <input type="text" id="check-in-date" class="form-control datepicker" placeholder="Select check-in date">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="check-out-date">Check-out Date</label>
+                                <input type="text" id="check-out-date" class="form-control datepicker" placeholder="Select check-out date">
+                            </div>
+                        </div>
+                        <div id="date-error" class="error-message" style="display: none;"></div>
+                    </div>
+                    
+                    <div class="camp-features mt-4">
+                        <h3>Included Features</h3>
+                        <% @camp.feature&.each do |feature| %>
+                            <span class="feature-item"><i class="fas fa-check-circle"></i> <%= feature %></span>
+                        <% end %>
+                    </div>
+                    
+                    <% if @camp.category == "adventure_activities" %>
+                        <div class="mt-4">
+                            <h3>Select Distance</h3>
+                            <div class="btn-group" role="group" aria-label="Distance options">
+                                <input type="radio" class="btn-check" name="distance" id="distance-11" value="11" checked>
+                                <label class="btn btn-outline-primary" for="distance-11">11 km</label>
+
+                                <input type="radio" class="btn-check" name="distance" id="distance-16" value="16">
+                                <label class="btn btn-outline-primary" for="distance-16">16 km</label>
+
+                                <input type="radio" class="btn-check" name="distance" id="distance-24" value="24">
+                                <label class="btn btn-outline-primary" for="distance-24">24 km</label>
+                            </div>
+                        </div>
+                    <% end %>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="purchase-box mt-1">
+                    <h2 class="mb-3">Book Your Adventure</h2>
+                    <h3 id="display-price" class="text-primary mb-4">₹<%= number_with_delimiter(@camp.price) %></h3>
+                    <button id="book-now-btn" class="btn btn-lg btn-purchase w-100 mb-3">Book Now</button>
+                    
+                    <%= form_tag bookings_path, method: :post, id: 'payment-form', style: 'display: none;' do %>
+                        <%= hidden_field_tag :camp_id, @camp.id %>
+                        <%= hidden_field_tag :razorpay_payment_id %>
+                        <%= hidden_field_tag :double_sharing %>
+                        <%= hidden_field_tag :triple_sharing %>
+                        <%= hidden_field_tag :quad_sharing %>
+                        <%= hidden_field_tag :six_sharing %>
+                        <%= hidden_field_tag :total_price %>
+                        <%= hidden_field_tag :check_in_date %>
+                        <%= hidden_field_tag :check_out_date %>
+                        <div class="form-group mb-3">
+                            <%= label_tag :name, "Name" %>
+                            <%= text_field_tag :name, nil, class: 'form-control', required: true %>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <%= label_tag :email, "Email" %>
+                            <%= email_field_tag :email, nil, class: 'form-control', required: true %>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <%= label_tag :phone, "Phone" %>
+                            <%= telephone_field_tag :phone, nil, class: 'form-control', required: true %>
+                        </div>
+                        
+                        <% if ENV['RAZORPAY_KEY_ID'] %>
+                            <button id="razorpay-payment-button" class="btn btn-lg btn-success w-100">Proceed to Payment</button>
+                        <% else %>
+                            <p class="text-danger">Razorpay credentials are not set up properly. Please contact the administrator.</p>
+                        <% end %>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <% if ENV['RAZORPAY_KEY_ID'] %>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <% end %>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    var campDetails = <%= @camp.details.to_json.html_safe %>;
+
+    function showNotification(message, type = 'error') {
+        Swal.fire({
+            icon: type,
+            title: type.charAt(0).toUpperCase() + type.slice(1),
+            text: message,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            showCloseButton: true,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'small-notification'
+            }
+        });
+    }
+
+    function updatePrice() {
+        let totalPrice = 0;
+        let sharingDetails = {};
+    
+        let checkIn = $('#check-in-date').val();
+        let checkOut = $('#check-out-date').val();
+    
+        if (!checkIn || !checkOut) {
+            $('#display-price').text('₹0.00');
+            return 0;
+        }
+    
+        ['double', 'triple', 'quad', 'six'].forEach(sharing => {
+            let quantity = parseInt($(`#${sharing}-sharing`).val()) || 0;
+            let perPersonPrice = campDetails[`${sharing}_price`] || 0;
+            let multiplier = sharing === 'double' ? 2 : (sharing === 'triple' ? 3 : (sharing === 'quad' ? 4 : 6));
+            let sharingPrice = perPersonPrice * multiplier;
+            totalPrice += quantity * sharingPrice;
+            sharingDetails[`${sharing}_sharing`] = quantity;
+    
+            $(`#${sharing}-price`).text('₹' + sharingPrice.toFixed(2));
+            $(`#${sharing}-per-person`).text('(₹' + perPersonPrice.toFixed(2) + ' per person)');
+        });
+    
+        <% if @camp.category == "adventure_activities" %>
+            let selectedDistance = $('input[name="distance"]:checked').val();
+            let pricePerKm = campDetails["per_km"] || 0;
+            totalPrice += selectedDistance * pricePerKm;
+        <% end %>
+    
+        $('#display-price').text('₹' + totalPrice.toFixed(2));
+    
+        Object.keys(sharingDetails).forEach(key => {
+            $(`#${key}`).val(sharingDetails[key]);
+        });
+        $('#total_price').val(totalPrice.toFixed(2));
+        $('#check_in_date').val(checkIn);
+        $('#check_out_date').val(checkOut);
+    
+        if (typeof options !== 'undefined') {
+            options.amount = totalPrice * 100;
+        }
+    
+        return totalPrice;
+    }
+
+    function changeQuantity(sharing, change) {
+        let checkIn = $('#check-in-date').val();
+        let checkOut = $('#check-out-date').val();
+
+        if (!checkIn || !checkOut) {
+            showNotification('Please select check-in and check-out dates first');
+            return;
+        }
+
+        let input = document.getElementById(sharing + '-sharing');
+        let newValue = parseInt(input.value || 0) + change;
+        input.value = Math.max(0, newValue);
+        updatePrice();
+    }
+
+    $(document).ready(function() {
+        $('.camp-image-slider').slick({
+            dots: true,
+            infinite: true,
+            speed: 500,
+            fade: true,
+            cssEase: 'linear',
+            autoplay: true,
+            autoplaySpeed: 3000
+        });
+
+        $('.datepicker').flatpickr({
+            minDate: "today",
+            maxDate: new Date().fp_incr(365),
+            onChange: function(selectedDates, dateStr, instance) {
+                updatePrice();
+                validateDates();
+            }
+        });
+
+        function validateForm() {
+            var name = $('#name').val().trim();
+            var email = $('#email').val().trim();
+            var phone = $('#phone').val().trim();
+            var isValid = true;
+            
+            if (name === '') {
+                showNotification('Please enter your name');
+                isValid = false;
+            }
+
+            if (email === '') {
+                showNotification('Please enter your email');
+                isValid = false;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showNotification('Please enter a valid email address');
+                isValid = false;
+            }
+
+            if (phone === '') {
+                showNotification('Please enter your phone number');
+                isValid = false;
+            } else if (!/^\d{10}$/.test(phone)) {
+                showNotification('Please enter a valid 10-digit phone number');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function validateDates() {
+            let checkIn = $('#check-in-date').val();
+            let checkOut = $('#check-out-date').val();
+
+            if (!checkIn || !checkOut) {
+                $('#date-error').hide();
+                return { datesSelected: false, validDateRange: false };
+            }
+
+            let checkInDate = new Date(checkIn);
+            let checkOutDate = new Date(checkOut);
+
+            if (checkInDate >= checkOutDate) {
+                $('#date-error').text('Check-out date must be after check-in date').show();
+                return { datesSelected: true, validDateRange: false };
+            }
+
+            $('#date-error').hide();
+            return { datesSelected: true, validDateRange: true };
+        }
+
+        $('#book-now-btn').click(function(e) {
+            e.preventDefault();
+            
+            let totalPrice = updatePrice();
+            let dateValidation = validateDates();
+
+            if (!dateValidation.datesSelected) {
+                showNotification('Please select check-in and check-out dates');
+                return;
+            }
+
+            if (!dateValidation.validDateRange) {
+                showNotification('Check-in date must be before the check-out date');
+                return;
+            }
+
+            if (totalPrice === 0) {
+                showNotification('Please select at least one sharing option');
+                return;
+            }
+
+            $(this).hide();
+            $('#payment-form').show();
+        });
+
+        $('.quantity-input button, input[name="distance"]').on('click', function() {
+            updatePrice();
+        });
+
+        $('.datepicker').on('change', function() {
+            updatePrice();
+            $('.per-person-price').show();
+        });
+
+        // Initially hide per person prices
+        $('.per-person-price').hide();
+
+        <% if ENV['RAZORPAY_KEY_ID'] %>
+            var options = {
+                key: "<%= ENV['RAZORPAY_KEY_ID'] %>",
+                amount: "<%= (@camp.price * 100).to_i %>",
+                currency: "INR",
+                name: "<%= @camp.name %>",
+                description: "Camp Booking",
+                handler: function (response) {
+                    $('#razorpay_payment_id').val(response.razorpay_payment_id);
+                    $('#payment-form').submit();
+                },
+                prefill: {
+                    name: "",
+                    email: "",
+                    contact: ""
+                },
+                theme: {
+                    color: "#F37254"
+                }
+            };
+
+            $('#razorpay-payment-button').click(function(e) {
+                e.preventDefault();
+                if (validateForm() && validateDates().datesSelected && validateDates().validDateRange) {
+                    updatePrice(); // Ensure all hidden fields are updated
+                    options.prefill.name = $('#name').val().trim();
+                    options.prefill.email = $('#email').val().trim();
+                    options.prefill.contact = $('#phone').val().trim();
+                    options.amount = updatePrice() * 100
+                    var rzp = new Razorpay(options);
+                    rzp.open();
+                }
+            });
+        <% end %>
+
+        // Initial price update
+        updatePrice();
+    });
+    </script>
+</body>
+</html>

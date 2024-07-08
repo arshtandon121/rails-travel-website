@@ -1,0 +1,62 @@
+<% if user_signed_in? %>
+  <div class="container mt-5">
+    <h1 class="text-center mb-5">Your Adventures</h1>
+
+ 
+
+    <!-- Orders List -->
+    <div class="row">
+      <% @bookings.each do |order| %>
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"><%= order.camp.name %></h5>
+              <h6 class="card-subtitle mb-2 text-muted">Order #<%= order.id %></h6>
+              <p class="card-text">
+                <strong>Date:</strong> <%= order.created_at.strftime("%B %d, %Y") %><br>
+                <strong>Price:</strong> <%= number_to_currency(order.payment.amount) %><br>
+                <strong>Status:</strong> <span class="badge badge-<%= order.camp_confirmation == true ? 'success' : 'warning' %>"><%= order.camp_confirmation %></span>
+              </p>
+              <%= link_to "View Details", booking_path(order), class: "btn btn-primary" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- No Orders Message -->
+    <% if @bookings.empty? %>
+      <div class="text-center mt-5">
+        <h3>You haven't made any orders yet.</h3>
+        <p>Start your adventure today!</p>
+        <%= link_to "Explore Camps", camps_path, class: "btn btn-success btn-lg mt-3" %>
+      </div>
+    <% end %>
+  </div>
+
+  <style>
+    body {
+      background-color: #f0f4f8;
+    }
+    .card {
+      transition: transform 0.3s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .carousel-item img {
+      height: 400px;
+      object-fit: cover;
+    }
+    .badge {
+      font-size: 0.9em;
+    }
+  </style>
+
+<% else %>
+  <div class="container mt-5 text-center">
+    <h2>Please log in to view your orders</h2>
+    <%= link_to "Log In", new_user_session_path, class: "btn btn-primary mt-3" %>
+  </div>
+<% end %>

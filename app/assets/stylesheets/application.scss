@@ -1,0 +1,224 @@
+
+ @import "bootstrap";
+
+
+ .titillium-web-extralight {
+    font-family: "Titillium Web", sans-serif;
+    font-weight: 200;
+    font-style: normal;
+  }
+  
+  .titillium-web-regular {
+    font-family: "Titillium Web", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .titillium-web-semibold {
+    font-family: "Titillium Web", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+  }
+  
+  .titillium-web-bold {
+    font-family: "Titillium Web", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  .titillium-web-black {
+    font-family: "Titillium Web", sans-serif;
+    font-weight: 900;
+    font-style: normal;
+  }
+  
+  .titillium-web-regular-italic {
+    font-family: "Titillium Web", sans-serif;
+    font-weight: 400;
+    font-style: italic;
+  }
+  
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    padding-top: 56px;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #333;
+    font-weight: 600;
+    font-size: 2.5rem;
+}
+
+.section-title-1 {
+    text-align: center;
+    color: #333;
+   
+    top: 0;
+    z-index: 1010;
+    background-color: #f8f9fa;
+    padding: 1rem 0;
+    font-weight: 600;
+    font-size: 2rem;
+}
+
+.category-tag {
+    text-decoration: none;
+    font-size: 18px;
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    margin-bottom: 2rem;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top {
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.1);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-text {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.btn-custom {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-custom:hover {
+    background-color: #0056b3;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    padding: 3rem 0;
+}
+
+.social-icons a {
+    font-size: 1.5rem;
+    margin: 0 10px;
+    color: #fff;
+    transition: color 0.3s;
+}
+
+.social-icons a:hover {
+    color: #007bff;
+}
+
+#categories {
+    position: sticky;
+    top: 20px;
+    z-index: 1000;
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.categories-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.categories-wrapper {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 10px 0;
+}
+
+.categories-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.category-tag {
+    flex: 0 0 auto;
+    margin-right: 15px;
+}
+
+.scroll-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.3s;
+}
+
+.scroll-arrow:hover {
+    background-color: rgba(0, 123, 255, 0.9);
+    color: #fff;
+}
+
+.scroll-left {
+    left: 10px;
+}
+
+.scroll-right {
+    right: 10px;
+}
+
+@media (max-width: 768px) {
+    .scroll-arrow {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+}

@@ -1,0 +1,22 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: postgres
+  password: Arsharsh11
+  host: database-1.cf0gse2cq8y9.ap-southeast-2.rds.amazonaws.com
+
+development:
+  <<: *default
+  database: myappdb
+
+test:
+  <<: *default
+  database: myappdb
+
+production:
+  <<: *default
+  database: myappdb
+  username: postgres
+  password: Arsharsh11
+  host: database-1.cf0gse2cq8y9.ap-southeast-2.rds.amazonaws.com
