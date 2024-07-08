@@ -1,5 +1,11 @@
 # Rails Application with PostgreSQL, Twilio, Razorpay, ActiveAdmin, and Devise
 
+Scrrenshots : 
+![Sample Screenshot](app/assets/screenshots/1.png)
+![Sample Screenshot](app/assets/screenshots/2.png)
+![Sample Screenshot](app/assets/screenshots/3.png)
+![Sample Screenshot](app/assets/screenshots/4.png)
+
 This Rails application integrates several key technologies and services:
 
 - Database: PostgreSQL on AWS
