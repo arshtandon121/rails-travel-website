@@ -1,5 +1,9 @@
 # Rails Application with PostgreSQL, Twilio, Razorpay, ActiveAdmin, and Devise
 
+
+I've created a fully functional trip booking website using Ruby on Rails, integrated with PostgreSQL for database management, Twilio for messaging services, and Razorpay for seamless payment processing. The application features a robust administrative interface with ActiveAdmin, and secure user authentication and management through Devise. The platform allows users to browse, book, and manage trips efficiently, with real-time confirmation messages sent via Twilio. The combination of these technologies ensures a smooth and secure booking experience for users.
+
+
 Scrrenshots : 
 ![Sample Screenshot](app/assets/screenshots/1.png)
 ![Sample Screenshot](app/assets/screenshots/2.png)
