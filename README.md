@@ -20,8 +20,8 @@ This Rails application integrates several key technologies and services:
 
 ## Prerequisites
 
-- Ruby (version X.X.X)
-- Rails (version X.X.X)
+- Ruby (version 3.2.0)
+- Rails (version 7.0.8.4)
 - PostgreSQL
 - AWS account
 - Twilio account
