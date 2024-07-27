@@ -12,13 +12,16 @@
     <style>
 
     .swal2-popup {
+        color: #dc3545;
+        background-color: #1e1e1e;
         font-size: 0.8rem;
     }
 
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Roboto', sans-serif;
-        }
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+        font-family: 'Roboto', sans-serif;
+    }
         .camp-image {
             width: 100%;
             height: 400px;
@@ -27,7 +30,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         .camp-details, .purchase-box {
-            background-color: #ffffff;
+            background-color: #1e1e1e;
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -39,8 +42,9 @@
         }
         .btn-purchase {
             background-color: #4CAF50;
+            color: #121212;
             border: none;
-            color: white;
+           
             font-weight: bold;
             padding: 12px 24px;
             border-radius: 30px;
@@ -52,20 +56,21 @@
         }
         .camp-rating {
             font-size: 24px;
-            color: #FFC107;
+            color: #FFA500;
         }
         .feature-item {
             display: inline-block;
             margin: 5px;
             padding: 8px 15px;
-            background-color: #e9ecef;
+            background-color: #2a2a2a;
+            color: #e0e0e0;
             border-radius: 20px;
             font-size: 0.9em;
             transition: all 0.3s ease;
         }
         .feature-item:hover {
             background-color: #4CAF50;
-            color: white;
+            color: #121212;
         }
         .quantity-input {
             width: 120px;
@@ -79,7 +84,7 @@
         }
         .quantity-input button:hover {
             background-color: #4CAF50;
-            color: white;
+            color: #121212;
         }
         .datepicker {
             border: 2px solid #4CAF50;
@@ -88,8 +93,35 @@
         }
         .error-message {
             color: #dc3545;
+            background-color: #1e1e1e;
             font-size: 0.9em;
             margin-top: 5px;
+        }
+
+
+        .text-primary {
+            color: #FFA500 !important;
+        }
+
+        .text-muted {
+            color: #a0a0a0 !important;
+        }
+
+        /* Sweet Alert customization */
+        .small-notification {
+            font-size: 0.8rem !important;
+        }
+        .swal2-popup {
+            background-color: #1e1e1e !important;
+        }
+        .swal2-title, .swal2-content {
+            color: #e0e0e0 !important;
+        }
+        .swal2-close {
+            color: #e0e0e0 !important;
+        }
+        .swal2-timer-progress-bar {
+            background-color: rgba(255, 165, 0, 0.5) !important; /* Semi-transparent orange */
         }
     </style>
 </head>
@@ -102,7 +134,7 @@
                         <img src="<%= pic %>" class="camp-image" alt="<%= @camp.name %>">
                     <% end %>
                 </div>
-
+                        
                 <div class="camp-details">
                     <h1 class="mb-4"><%= @camp.name %></h1>
                     <div class="camp-info mb-4">
@@ -113,6 +145,7 @@
                     </div>
                     <p><i class="fas fa-map-marker-alt"></i> <%= @camp.location %></p>
                     
+                <% if @camp.category != "adventure_activities" %>
                     <h3 class="mt-4 mb-3">Sharing Options</h3>
                     <% ["Double", "Triple", "Quad", "Six"].each do |sharing| %>
                         <div class="sharing-option mb-3">
@@ -130,6 +163,7 @@
                             </div>
                         </div>
                     <% end %>
+                <% end %>
                     
                     <div class="dates mt-4">
                         <div class="row">
@@ -224,6 +258,21 @@
     var campDetails = <%= @camp.details.to_json.html_safe %>;
 
     function showNotification(message, type = 'error') {
+        const backgroundColor = '#1e1e1e';
+        const textColor = '#e0e0e0';
+        let iconColor;
+        
+        switch(type) {
+            case 'success':
+                iconColor = '#4CAF50'; // Green
+                break;
+            case 'error':
+                iconColor = 'red'; // Orange
+                break;
+            default:
+                iconColor = '#FFA500'; // Default to orange
+        }
+    
         Swal.fire({
             icon: type,
             title: type.charAt(0).toUpperCase() + type.slice(1),
@@ -236,10 +285,20 @@
             timerProgressBar: true,
             customClass: {
                 popup: 'small-notification'
-            }
+            },
+            background: backgroundColor,
+            color: textColor,
+            iconColor: iconColor,
         });
     }
-
+    
+    
+    function calculateAdventurePrice() {
+        let selectedDistance = $('input[name="distance"]:checked').val();
+        let pricePerKm = campDetails["per_km"] || 0;
+        return selectedDistance * pricePerKm;
+    }
+    
     function updatePrice() {
         let totalPrice = 0;
         let sharingDetails = {};
@@ -252,22 +311,20 @@
             return 0;
         }
     
-        ['double', 'triple', 'quad', 'six'].forEach(sharing => {
-            let quantity = parseInt($(`#${sharing}-sharing`).val()) || 0;
-            let perPersonPrice = campDetails[`${sharing}_price`] || 0;
-            let multiplier = sharing === 'double' ? 2 : (sharing === 'triple' ? 3 : (sharing === 'quad' ? 4 : 6));
-            let sharingPrice = perPersonPrice * multiplier;
-            totalPrice += quantity * sharingPrice;
-            sharingDetails[`${sharing}_sharing`] = quantity;
-    
-            $(`#${sharing}-price`).text('₹' + sharingPrice.toFixed(2));
-            $(`#${sharing}-per-person`).text('(₹' + perPersonPrice.toFixed(2) + ' per person)');
-        });
-    
         <% if @camp.category == "adventure_activities" %>
-            let selectedDistance = $('input[name="distance"]:checked').val();
-            let pricePerKm = campDetails["per_km"] || 0;
-            totalPrice += selectedDistance * pricePerKm;
+            totalPrice = calculateAdventurePrice();
+        <% else %>
+            ['double', 'triple', 'quad', 'six'].forEach(sharing => {
+                let quantity = parseInt($(`#${sharing}-sharing`).val()) || 0;
+                let perPersonPrice = campDetails[`${sharing}_price`] || 0;
+                let multiplier = sharing === 'double' ? 2 : (sharing === 'triple' ? 3 : (sharing === 'quad' ? 4 : 6));
+                let sharingPrice = perPersonPrice * multiplier;
+                totalPrice += quantity * sharingPrice;
+                sharingDetails[`${sharing}_sharing`] = quantity;
+    
+                $(`#${sharing}-price`).text('₹' + sharingPrice.toFixed(2));
+                $(`#${sharing}-per-person`).text('(₹' + perPersonPrice.toFixed(2) + ' per person)');
+            });
         <% end %>
     
         $('#display-price').text('₹' + totalPrice.toFixed(2));
@@ -285,22 +342,22 @@
     
         return totalPrice;
     }
-
+    
     function changeQuantity(sharing, change) {
         let checkIn = $('#check-in-date').val();
         let checkOut = $('#check-out-date').val();
-
+    
         if (!checkIn || !checkOut) {
             showNotification('Please select check-in and check-out dates first');
             return;
         }
-
+    
         let input = document.getElementById(sharing + '-sharing');
         let newValue = parseInt(input.value || 0) + change;
         input.value = Math.max(0, newValue);
         updatePrice();
     }
-
+    
     $(document).ready(function() {
         $('.camp-image-slider').slick({
             dots: true,
@@ -311,7 +368,7 @@
             autoplay: true,
             autoplaySpeed: 3000
         });
-
+    
         $('.datepicker').flatpickr({
             minDate: "today",
             maxDate: new Date().fp_incr(365),
@@ -320,7 +377,7 @@
                 validateDates();
             }
         });
-
+    
         function validateForm() {
             var name = $('#name').val().trim();
             var email = $('#email').val().trim();
@@ -331,7 +388,7 @@
                 showNotification('Please enter your name');
                 isValid = false;
             }
-
+    
             if (email === '') {
                 showNotification('Please enter your email');
                 isValid = false;
@@ -339,7 +396,7 @@
                 showNotification('Please enter a valid email address');
                 isValid = false;
             }
-
+    
             if (phone === '') {
                 showNotification('Please enter your phone number');
                 isValid = false;
@@ -347,68 +404,73 @@
                 showNotification('Please enter a valid 10-digit phone number');
                 isValid = false;
             }
-
+    
             return isValid;
         }
-
+    
         function validateDates() {
             let checkIn = $('#check-in-date').val();
             let checkOut = $('#check-out-date').val();
-
+    
             if (!checkIn || !checkOut) {
                 $('#date-error').hide();
                 return { datesSelected: false, validDateRange: false };
             }
-
+    
             let checkInDate = new Date(checkIn);
             let checkOutDate = new Date(checkOut);
-
+    
             if (checkInDate >= checkOutDate) {
                 $('#date-error').text('Check-out date must be after check-in date').show();
                 return { datesSelected: true, validDateRange: false };
             }
-
+    
             $('#date-error').hide();
             return { datesSelected: true, validDateRange: true };
         }
-
+    
         $('#book-now-btn').click(function(e) {
             e.preventDefault();
             
             let totalPrice = updatePrice();
             let dateValidation = validateDates();
-
+    
             if (!dateValidation.datesSelected) {
                 showNotification('Please select check-in and check-out dates');
                 return;
             }
-
+    
             if (!dateValidation.validDateRange) {
                 showNotification('Check-in date must be before the check-out date');
                 return;
             }
-
+    
             if (totalPrice === 0) {
                 showNotification('Please select at least one sharing option');
                 return;
             }
-
+    
             $(this).hide();
             $('#payment-form').show();
         });
-
+    
         $('.quantity-input button, input[name="distance"]').on('click', function() {
             updatePrice();
         });
-
+    
         $('.datepicker').on('change', function() {
             updatePrice();
             $('.per-person-price').show();
         });
-
+    
         // Initially hide per person prices
         $('.per-person-price').hide();
-
+    
+        // Add this event listener for distance selection
+        $('input[name="distance"]').on('change', function() {
+            updatePrice();
+        });
+    
         <% if ENV['RAZORPAY_KEY_ID'] %>
             var options = {
                 key: "<%= ENV['RAZORPAY_KEY_ID'] %>",
@@ -429,7 +491,7 @@
                     color: "#F37254"
                 }
             };
-
+    
             $('#razorpay-payment-button').click(function(e) {
                 e.preventDefault();
                 if (validateForm() && validateDates().datesSelected && validateDates().validDateRange) {
@@ -443,7 +505,7 @@
                 }
             });
         <% end %>
-
+    
         // Initial price update
         updatePrice();
     });

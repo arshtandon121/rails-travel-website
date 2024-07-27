@@ -1,62 +1,160 @@
 <% if user_signed_in? %>
-  <div class="container mt-5">
-    <h1 class="text-center mb-5">Your Adventures</h1>
-
- 
-
+  <div class="container mt-5 position-relative">
+    <div class="background-shapes"></div>
+    <h1 class="text-center mb-5 text-light">Your Adventures</h1>
+    
     <!-- Orders List -->
     <div class="row">
       <% @bookings.each do |order| %>
         <div class="col-md-6 mb-4">
-          <div class="card">
+          <div class="card text-light">
             <div class="card-body">
               <h5 class="card-title"><%= order.camp.name %></h5>
-              <h6 class="card-subtitle mb-2 text-muted">Order #<%= order.id %></h6>
+              <h6 class="card-subtitle mb-2 text-green">Order #<%= order.id %></h6>
               <p class="card-text">
                 <strong>Date:</strong> <%= order.created_at.strftime("%B %d, %Y") %><br>
-                <strong>Price:</strong> <%= number_to_currency(order.payment.amount) %><br>
-                <strong>Status:</strong> <span class="badge badge-<%= order.camp_confirmation == true ? 'success' : 'warning' %>"><%= order.camp_confirmation %></span>
+                <strong>Price:</strong> ₹ <%= (order.payment.amount) %><br>
+                <strong>Status:</strong> 
+                <span class="badge badge-<%= order.camp_confirmation ? 'success' : 'warning' %>">
+                  <%= order.camp_confirmation ? 'Confirmed' : 'Pending' %>
+                </span>
               </p>
-              <%= link_to "View Details", booking_path(order), class: "btn btn-primary" %>
+              <%= link_to "View Details", booking_path(order), class: "btn btn-orange" %>
             </div>
           </div>
         </div>
       <% end %>
     </div>
-
+    
     <!-- No Orders Message -->
     <% if @bookings.empty? %>
-      <div class="text-center mt-5">
+      <div class="text-center mt-5 text-light">
         <h3>You haven't made any orders yet.</h3>
         <p>Start your adventure today!</p>
-        <%= link_to "Explore Camps", camps_path, class: "btn btn-success btn-lg mt-3" %>
+        <%= link_to "Explore Camps", camps_path, class: "btn btn-green btn-lg mt-3" %>
       </div>
     <% end %>
   </div>
-
+  
   <style>
     body {
-      background-color: #f0f4f8;
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: 'Arial', sans-serif;
+      overflow-x: hidden;
+    }
+    .background-shapes {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    .background-shapes::before,
+    .background-shapes::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+    }
+    .background-shapes::before {
+      width: 300px;
+      height: 300px;
+      background: rgba(76, 175, 80, 0.1);
+      top: -100px;
+      right: -100px;
+    }
+    .background-shapes::after {
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 165, 0, 0.1);
+      bottom: -50px;
+      left: -50px;
+    }
+    .text-light {
+      color: #e0e0e0 !important;
+    }
+    .text-green {
+      color: #4CAF50 !important;
+    }
+    .btn-orange {
+      background-color: #FFA500 !important;
+      color: #121212;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+    .btn-orange:hover {
+      background-color: #FF8C00 !important;
+      color: #121212;
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(255, 165, 0, 0.3);
+    }
+    .btn-green {
+      background-color: #4CAF50;
+      color: #121212;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+    }
+    .btn-green:hover {
+      background-color: #45a049;
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
     }
     .card {
-      transition: transform 0.3s;
+      transition: all 0.3s ease;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+      background-color: #1e1e1e;
+      position: relative;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 165, 0, 0.1), rgba(76, 175, 80, 0.1));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
     }
     .card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-10px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
     }
-    .carousel-item img {
-      height: 400px;
-      object-fit: cover;
+    .card:hover::before {
+      opacity: 1;
     }
-    .badge {
-      font-size: 0.9em;
+    .badge-success {
+      background-color: #4CAF50;
+      color: #121212;
+    }
+    .badge-warning {
+      background-color: #FFA500;
+      color: #121212;
+    }
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 0.75rem;
+    }
+    .card-subtitle {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    .card-text strong {
+      color: #FFA500;
     }
   </style>
-
 <% else %>
   <div class="container mt-5 text-center">
-    <h2>Please log in to view your orders</h2>
-    <%= link_to "Log In", new_user_session_path, class: "btn btn-primary mt-3" %>
+    <h2 class="text-light">Please log in to view your orders</h2>
+    <%= link_to "Log In", new_user_session_path, class: "btn btn-green mt-3" %>
   </div>
 <% end %>

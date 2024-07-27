@@ -5,6 +5,12 @@ Rails.application.configure do
 
   # Code is not reloaded between requests.
   config.cache_classes = true
+  
+  config.assets.js_compressor = :terser
+  config.assets.css_compressor = :sass
+
+  # Specify additional assets to precompile
+  config.assets.precompile += %w( application.js )
 
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers

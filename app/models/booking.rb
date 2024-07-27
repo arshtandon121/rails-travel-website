@@ -18,7 +18,7 @@ class Booking < ApplicationRecord
 
   def self.ransackable_attributes(auth_object = nil)
     # List the attributes you want to make searchable
-    ["booking_details", "camp_confirmation", "camp_id", "created_at", "email", "id", "name", "payment_confirmation", "payment_id", "phone", "razorpay_order_id", "updated_at", "user_id"]
+    ["booking_details", "camp_confirmation", "camp_id", "created_at", "email", "id", "name", "payment_confirmation", "payment_id", "phone", "razorpay_order_id", "updated_at", "user_id", "booking_messages_id_eq"]
   end
 
 

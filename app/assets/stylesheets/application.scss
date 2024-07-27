@@ -152,7 +152,7 @@ footer {
 
 #categories {
     position: sticky;
-    top: 20px;
+    top: 25px;
     z-index: 1000;
     background-color: #f8f9fa;
     padding: 20px 0;
@@ -164,15 +164,7 @@ footer {
     overflow: hidden;
 }
 
-.categories-wrapper {
-    display: flex;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding: 10px 0;
-}
+
 
 .categories-wrapper::-webkit-scrollbar {
     display: none;

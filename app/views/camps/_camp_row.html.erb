@@ -1,385 +1,411 @@
-<style>
+  <style>
 
 
-.categories-container {
-  position: relative;
-  overflow: hidden;
-}
+  .categories-container {
+    position: relative;
+    overflow: hidden;
+  }
 
-.categories-wrapper {
-  display: flex;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  padding: 10px 0;
-}
+  .categories-wrapper {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 0;
+  }
 
-.category-tag {
-  flex: 0 0 auto;
-  margin-right: 10px;
-}
+  .category-tag {
+    flex: 0 0 auto;
+    margin-right: 10px;
+  }
 
-.scroll-arrow {
+  .scroll-arrow {
 
-}
+  }
 
-.scroll-left {
-  left: 10px;
-}
+  .scroll-left {
+    left: 10px;
+  }
 
-.scroll-right {
-  right: 10px;
-}
+  .scroll-right {
+    right: 10px;
+  }
 
-.category-row {
-  position: relative;
-  margin-bottom: 2rem;
-  padding: 0 20px;
-}
+  .category-row {
+    position: relative;
+    margin-bottom: 2rem;
+    padding: 0 20px;
+  }
 
-.camp-scroll-container {
-  display: flex;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  gap: 1rem;
-  padding: 10px 0;
-  margin-left: -10px; /* Compensate for the gap and padding */
-  margin-right: -50px; /* Compensate for the gap and padding */
-  -webkit-overflow-scrolling: touch;
-  /* Add other necessary styles */
-}
+  .camp-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 1rem;
+    padding: 10px 0;
+    margin-left: -10px; /* Compensate for the gap and padding */
+    margin-right: -50px; /* Compensate for the gap and padding */
+    -webkit-overflow-scrolling: touch;
+    /* Add other necessary styles */
+  }
 
-.camp-images {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-}
+  .camp-images {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+  }
 
-.image-carousel {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  height: 200px; /* Adjust as necessary */
-}
-.image-carousel img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-}
+  .image-carousel {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 200px; /* Adjust as necessary */
+  }
+  .image-carousel img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
 
-.image-carousel img.active {
-  opacity: 1;
-}
+  .image-carousel img.active {
+    opacity: 1;
+  }
 
-.carousel-dots {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-}
+  .carousel-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+  }
 
-.carousel-dots .dot {
-  width: 10px;
-  height: 10px;
-  margin: 0 5px;
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 50%;
-  cursor: pointer;
-}
+  .carousel-dots .dot {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    cursor: pointer;
+  }
 
-.carousel-dots .dot.active {
-  background-color: rgba(255, 255, 255, 1);
-}
+  .carousel-dots .dot.active {
+    background-color: rgba(255, 255, 255, 1);
+  }
 
-.category-row {
-  position: relative;
-  margin-bottom: 2rem;
-  padding: 0 40px;
-}
+  .category-row {
+    position: relative;
+    margin-bottom: 2rem;
+    padding: 0 40px;
+  }
 
-.camp-scroll-container {
-  display: flex;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-  gap: 1rem;
-}
+  .camp-scroll-container {
+    display: flex;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    gap: 1rem;
+  }
 
-.camp-card {
-  flex: 0 0 300px;
-  border: none;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
+  .camp-card {
+    flex: 0 0 300px;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
 
-.camp-card:hover {
-  transform: translateY(-5px);
-}
+  .camp-card:hover {
+    transform: translateY(-5px);
+  }
 
-.camp-images {
-  position: relative;
-  height: 200px;
-}
+  .camp-images {
+    position: relative;
+    height: 200px;
+  }
 
-.camp-images img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+  .camp-images img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
-.camp-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: #ff4081;
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: bold;
-}
+  .camp-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #ff4081;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
 
-.camp-details {
-  padding: 1rem;
-}
+  .camp-details {
+    padding: 1rem;
+  }
 
-.camp-rating {
-  display: flex;
-  align-items: center;
-  font-size: 0.9rem;
-  color: #ffa000;
-  margin-bottom: 0.5rem;
-}
+  .camp-rating {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #ffa000;
+    margin-bottom: 0.5rem;
+  }
 
-.camp-rating i {
-  margin-right: 0.25rem;
-}
+  .camp-rating i {
+    margin-right: 0.25rem;
+  }
 
-.camp-price {
-  color: #ff5722;
-  font-weight: bold;
-  font-size: 1.2rem;
-  margin-top: 0.5rem;
-}
+  .camp-price {
+    color: #ff5722;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+  }
 
-.view-details-btn {
-  width: 100%;
-  padding: 0.75rem;
-  text-center;
-  text-decoration: none;
-  margin-top: 1rem;
-  border: none;
-  color: white;
-  background-color: #4caf50;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
+  .view-details-btn {
+    width: 100%;
+    padding: 0.75rem;
+    text-center;
+    text-decoration: none;
+    margin-top: 1rem;
+    border: none;
+    color: white;
+    background-color: #4caf50;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
 
-.view-details-btn:hover {
-  background-color: #45a049;
-  color: white;
-}
+  .view-details-btn:hover {
+    background-color: #45a049;
+    color: white;
+  }
 
-.scroll-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(255, 255, 255, 0.8);
-  border: none;
-  color: #333;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-}
+  .scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    color: #333;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+  }
 
-.scroll-btn:hover {
-  background-color: rgba(255, 255, 255, 1);
-}
+  .scroll-btn:hover {
+    background-color: rgba(255, 255, 255, 1);
+  }
 
-.prev-btn {
-  left: 0;
-}
+  .prev-btn {
+    left: 0;
+  }
 
-.next-btn {
-  right: 0;
-}
+  .next-btn {
+    right: 0;
+  }
 
+  .discover-more-btn {
+    display: block;
+    width: 200px;
+    margin: 1rem auto 0;
+   
+    padding: 0.75rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+
+
+
+  /* Discover More Button */
 .discover-more-btn {
-  display: block;
-  width: 200px;
-  margin: 1rem auto 0;
-  background-color: #2196f3;
-  color: white;
-  padding: 0.75rem;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  text-align: center;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
+    background-color: #ffa500 !important;
+    color: #f0f0f0;
 }
 
 .discover-more-btn:hover {
-  background-color: #1e88e5;
+    background-color: #8a2be2 !important;
+    color: #f0f0f0;
 }
-</style>
+  </style>
 
-<div class="category-row">
-  <button class="scroll-btn prev-btn" style="z-index: 1000;" aria-label="Previous">&lt;</button>
-  <button class="scroll-btn next-btn" style="z-index: 1000;" aria-label="Next">&gt;</button>
-  
-  <div class="camp-scroll-container">
-  <% camps.each do |camp| %>
-    <div class="camp-card">
-      <div class="camp-images">
-        <div style="z-index: 1000;" class="camp-badge">Save INR <%= camp[:discount] %></div>
-        <div class="image-carousel" id="carousel-<%= camp[:id] %>">
-          <% camp[:images].each_with_index do |image, index| %>
-            <img src="<%= image[:url] %>" alt="<%= camp[:name] %>" class="<%= 'active' if index == 0 %>">
-          <% end %>
-        </div>
-        <div class="carousel-dots" id="dots-<%= camp[:id] %>">
-          <% camp[:images].each_with_index do |_, index| %>
-            <span class="dot <%= 'active' if index == 0 %>" data-index="<%= index %>"></span>
-          <% end %>
-        </div>
-      </div>
-      <div class="camp-details">
-        <h3><%= camp[:name] %></h3>
-        <div class="camp-rating">
-          <i class="fas fa-star"></i> <%= camp[:rating] %> (<%= camp[:reviews_count] %> reviews)
-        </div>
-        <p><i class="fas fa-map-marker-alt"></i> <%= camp[:location] %></p>
-        <p><i class="fas fa-clock"></i> <%= camp[:duration] %></p>
-
-        <% if category == "adventure_activities" %>
-          <div class="mb-3">
-            <select id="select-<%= camp[:id] %>" class="form-select">
-              <option value="11" data-price="<%= camp[:per_km] %>">11 km</option>
-              <option value="16" data-price="<%= camp[:per_km] %>">16 km</option>
-              <option value="24" data-price="<%= camp[:per_km] %>">24 km</option>
-            </select>
-            <p id="price-<%= camp[:id] %>" class="mt-2">Price: INR <%= camp[:per_km] * 11 %></p>
+  <div class="category-row">
+    <button class="scroll-btn prev-btn d-lg-block d-none" style="z-index: 900;" aria-label="Previous">&lt;</button>
+    <button class="scroll-btn next-btn d-lg-block d-none" style="z-index: 900;" aria-label="Next">&gt;</button>
+    
+    <div class="camp-scroll-container">
+    <% camps.each do |camp| %>
+      <div class="camp-card">
+        <div class="camp-images">
+          <div style="z-index: 900;" class="camp-badge">Save INR <%= camp[:discount] %></div>
+          <div class="image-carousel" id="carousel-<%= camp[:id] %>">
+            <% camp[:images].each_with_index do |image, index| %>
+              <img src="<%= image[:url] %>" alt="<%= camp[:name] %>" class="<%= 'active' if index == 0 %>">
+            <% end %>
           </div>
-        <% else %>
-          <p class="camp-price">INR <%= camp[:price] %></p>
-        <% end %>
-        <span class="w-100 d-flex text-center">
-          <%= link_to 'View Details', camp_path(camp[:id]), class: 'view-details-btn' %>
-        </span>
+          <div class="carousel-dots" id="dots-<%= camp[:id] %>">
+            <% camp[:images].each_with_index do |_, index| %>
+              <span class="dot <%= 'active' if index == 0 %>" data-index="<%= index %>"></span>
+            <% end %>
+          </div>
+        </div>
+        <div class="camp-details">
+          <h3><%= camp[:name] %></h3>
+          <div class="camp-rating">
+            <i class="fas fa-star"></i> <%= camp[:rating] %> (<%= camp[:reviews_count] %> reviews)
+          </div>
+          <p><i class="fas fa-map-marker-alt"></i> <%= camp[:location] %></p>
+          <p><i class="fas fa-clock"></i> <%= camp[:duration] %></p>
+
+          <% if category == "adventure_activities" %>
+            <div class="mb-3">
+              <select id="select-<%= camp[:id] %>" class="form-select">
+                <option value="11" data-price="<%= camp[:per_km] %>">11 km</option>
+                <option value="16" data-price="<%= camp[:per_km] %>">16 km</option>
+                <option value="24" data-price="<%= camp[:per_km] %>">24 km</option>
+              </select>
+              <p id="price-<%= camp[:id] %>" class="mt-2">Price: INR <%= camp[:per_km] * 11 %></p>
+            </div>
+          <% else %>
+            <p class="camp-price">INR <%= camp[:price] %></p>
+          <% end %>
+          <span class="w-100 d-flex text-center">
+            <%= link_to 'View Details', camp_path(camp[:id]), class: 'view-details-btn' %>
+          </span>
+        </div>
       </div>
-    </div>
-  <% end %>
-</div>
+    <% end %>
+  </div>
 
 
-  <% if camps.length > 3 %>
-    <%= link_to 'Discover More', camps_category_path(category: category), class: 'discover-more-btn' %>
-  <% end %>
-</div>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const categoryRows = document.querySelectorAll('.category-row');
+    <% if camps.length > 3 %>
+      <%= link_to 'Discover More', camps_category_path(category: category), class: 'discover-more-btn' %>
+    <% end %>
+  </div>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const categoryRows = document.querySelectorAll('.category-row');
 
-  categoryRows.forEach(row => {
-    const scrollContainer = row.querySelector('.camp-scroll-container');
-    const prevBtn = row.querySelector('.prev-btn');
-    const nextBtn = row.querySelector('.next-btn');
+    categoryRows.forEach(row => {
+      const scrollContainer = row.querySelector('.camp-scroll-container');
+      const prevBtn = row.querySelector('.prev-btn');
+      const nextBtn = row.querySelector('.next-btn');
 
-    if (scrollContainer && prevBtn && nextBtn) {
-      prevBtn.addEventListener('click', () => {
-        scrollContainer.scrollBy({ left: -300, behavior: 'smooth' });
-      });
+      if (scrollContainer && prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', () => {
+          scrollContainer.scrollBy({ left: -300, behavior: 'smooth' });
+        });
 
-      nextBtn.addEventListener('click', () => {
-        scrollContainer.scrollBy({ left: 300, behavior: 'smooth' });
-      });
+        nextBtn.addEventListener('click', () => {
+          scrollContainer.scrollBy({ left: 300, behavior: 'smooth' });
+        });
 
-      function toggleScrollButtons() {
-        prevBtn.style.display = scrollContainer.scrollLeft > 0 ? 'flex' : 'none';
-        nextBtn.style.display = 
-          scrollContainer.scrollLeft < scrollContainer.scrollWidth - scrollContainer.clientWidth 
-            ? 'flex' 
-            : 'none';
+        function toggleScrollButtons() {
+          prevBtn.style.display = scrollContainer.scrollLeft > 0 ? 'flex' : 'none';
+          nextBtn.style.display = 
+            scrollContainer.scrollLeft < scrollContainer.scrollWidth - scrollContainer.clientWidth 
+              ? 'flex' 
+              : 'none';
+        }
+
+        scrollContainer.addEventListener('scroll', toggleScrollButtons);
+        window.addEventListener('resize', toggleScrollButtons);
+        toggleScrollButtons();
+
+        // Handle touch events for scrolling
+        let startX = 0;
+        let scrollLeft = 0;
+
+        scrollContainer.addEventListener('touchstart', function(e) {
+          startX = e.touches[0].pageX - scrollContainer.offsetLeft;
+          scrollLeft = scrollContainer.scrollLeft;
+        });
+
+        scrollContainer.addEventListener('touchmove', function(e) {
+          const x = e.touches[0].pageX - scrollContainer.offsetLeft;
+          const walk = (x - startX) * 1.5; // Multiplied by 1.5 for a smoother scroll
+          scrollContainer.scrollLeft = scrollLeft - walk;
+        });
+
+        scrollContainer.addEventListener('touchend', function(e) {
+          // Smooth scroll after touchend
+          const deltaX = e.changedTouches[0].pageX - startX;
+          scrollContainer.scrollBy({ left: -deltaX, behavior: 'smooth' });
+        });
+      }
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const carousels = document.querySelectorAll('.image-carousel');
+
+    carousels.forEach(carousel => {
+      let currentIndex = 0;
+      const images = carousel.querySelectorAll('img');
+      const dots = document.querySelectorAll(`#dots-${carousel.id.split('-')[1]} .dot`);
+      const totalImages = images.length;
+
+      function showSlide(index) {
+        images.forEach((img, i) => {
+          img.classList.toggle('active', i === index);
+        });
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === index);
+        });
       }
 
-      scrollContainer.addEventListener('scroll', toggleScrollButtons);
-      window.addEventListener('resize', toggleScrollButtons);
-      toggleScrollButtons();
-
-      // Handle touch events for scrolling
-      let startX = 0;
-      let scrollLeft = 0;
-
-      scrollContainer.addEventListener('touchstart', function(e) {
-        startX = e.touches[0].pageX - scrollContainer.offsetLeft;
-        scrollLeft = scrollContainer.scrollLeft;
-      });
-
-      scrollContainer.addEventListener('touchmove', function(e) {
-        const x = e.touches[0].pageX - scrollContainer.offsetLeft;
-        const walk = (x - startX) * 1.5; // Multiplied by 1.5 for a smoother scroll
-        scrollContainer.scrollLeft = scrollLeft - walk;
-      });
-
-      scrollContainer.addEventListener('touchend', function(e) {
-        // Smooth scroll after touchend
-        const deltaX = e.changedTouches[0].pageX - startX;
-        scrollContainer.scrollBy({ left: -deltaX, behavior: 'smooth' });
-      });
-    }
-  });
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-  const carousels = document.querySelectorAll('.image-carousel');
-
-  carousels.forEach(carousel => {
-    let currentIndex = 0;
-    const images = carousel.querySelectorAll('img');
-    const dots = document.querySelectorAll(`#dots-${carousel.id.split('-')[1]} .dot`);
-    const totalImages = images.length;
-
-    function showSlide(index) {
-      images.forEach((img, i) => {
-        img.classList.toggle('active', i === index);
-      });
-      dots.forEach((dot, i) => {
-        dot.classList.toggle('active', i === index);
-      });
-    }
-
-    function nextSlide() {
-      currentIndex = (currentIndex + 1) % totalImages;
-      showSlide(currentIndex);
-    }
-
-    dots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        currentIndex = parseInt(dot.dataset.index, 10);
+      function nextSlide() {
+        currentIndex = (currentIndex + 1) % totalImages;
         showSlide(currentIndex);
+      }
+
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          currentIndex = parseInt(dot.dataset.index, 10);
+          showSlide(currentIndex);
+        });
       });
+
+      setInterval(nextSlide, 2000); // Change image every 2 seconds
     });
 
-    setInterval(nextSlide, 2000); // Change image every 2 seconds
+    const adventureSelects = document.querySelectorAll('select[id^="select-"]');
+    
+    adventureSelects.forEach(select => {
+      select.addEventListener('change', function() {
+        const campId = this.id.split('-')[1];
+        const priceElement = document.getElementById(`price-${campId}`);
+        const selectedOption = this.options[this.selectedIndex];
+        const kmValue = parseInt(this.value);
+        const pricePerKm = parseFloat(selectedOption.dataset.price);
+        
+        if (priceElement && !isNaN(kmValue) && !isNaN(pricePerKm)) {
+          const totalPrice = kmValue * pricePerKm;
+          priceElement.textContent = `Price: INR ${totalPrice.toFixed(2)}`;
+        }
+      });
+    });
   });
-});
 
 
 
-</script>
+
+  </script>
