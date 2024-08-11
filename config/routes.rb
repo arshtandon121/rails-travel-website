@@ -24,6 +24,11 @@ Rails.application.routes.draw do
  
   get 'custom_admin_dashboard', to: 'admin#dashboard', as: :custom_admin_dashboard
 
+  # coupons
+  get 'user_coupons', to: 'coupons#user_coupons'
+  post 'generate_coupon', to: 'coupons#generate'
+  post 'apply_coupon', to: 'coupons#apply'
+
   # Payments routes
   get 'payments', to: 'payments#index', as: 'payments'
   get 'payments/new', to: 'payments#new', as: 'new_payment'

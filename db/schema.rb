@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_07_07_094249) do
+ActiveRecord::Schema[7.0].define(version: 2024_08_10_111910) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -36,6 +36,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_07_094249) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "role", default: 0, null: false
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
@@ -66,6 +67,41 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_07_094249) do
     t.index ["user_id"], name: "index_bookings_on_user_id"
   end
 
+  create_table "camp_change_requests", force: :cascade do |t|
+    t.bigint "camp_id", null: false
+    t.string "name"
+    t.decimal "price"
+    t.integer "person"
+    t.boolean "available"
+    t.string "category"
+    t.text "details"
+    t.bigint "user_id", null: false
+    t.integer "status", default: 0
+    t.string "per_km"
+    t.string "camp_duration"
+    t.string "location"
+    t.string "rating"
+    t.string "feature"
+    t.string "double_price"
+    t.string "triple_price"
+    t.string "quad_price"
+    t.string "six_price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["camp_id"], name: "index_camp_change_requests_on_camp_id"
+    t.index ["user_id"], name: "index_camp_change_requests_on_user_id"
+  end
+
+  create_table "camp_coupons", force: :cascade do |t|
+    t.bigint "camp_id", null: false
+    t.decimal "min_price", precision: 10, scale: 2, null: false
+    t.decimal "discount", precision: 5, scale: 2, null: false
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["camp_id"], name: "index_camp_coupons_on_camp_id"
+  end
+
   create_table "camps", force: :cascade do |t|
     t.string "name"
     t.decimal "price", precision: 10, scale: 2
@@ -77,6 +113,15 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_07_094249) do
     t.text "camp_pic", default: [], array: true
     t.integer "category"
     t.integer "user_id"
+    t.boolean "authorized", default: false
+  end
+
+  create_table "margins", force: :cascade do |t|
+    t.decimal "margin", precision: 10, scale: 2
+    t.bigint "camp_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["camp_id"], name: "index_margins_on_camp_id", unique: true
   end
 
   create_table "payments", force: :cascade do |t|
@@ -91,9 +136,24 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_07_094249) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "payment_details"
+    t.boolean "payment_cleared_to_camp", default: false
     t.index ["booking_id"], name: "index_payments_on_booking_id"
     t.index ["camp_id"], name: "index_payments_on_camp_id"
     t.index ["user_id"], name: "index_payments_on_user_id"
+  end
+
+  create_table "user_coupons", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "camp_id", null: false
+    t.string "code", limit: 12, null: false
+    t.boolean "used", default: false
+    t.decimal "min_price", precision: 10, scale: 2, null: false
+    t.decimal "discount", precision: 5, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["camp_id"], name: "index_user_coupons_on_camp_id"
+    t.index ["code"], name: "index_user_coupons_on_code", unique: true
+    t.index ["user_id"], name: "index_user_coupons_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -116,7 +176,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_07_094249) do
   add_foreign_key "bookings", "camps"
   add_foreign_key "bookings", "payments"
   add_foreign_key "bookings", "users"
+  add_foreign_key "camp_change_requests", "camps"
+  add_foreign_key "camp_change_requests", "users"
+  add_foreign_key "camp_coupons", "camps"
+  add_foreign_key "margins", "camps"
   add_foreign_key "payments", "bookings"
   add_foreign_key "payments", "camps"
   add_foreign_key "payments", "users"
+  add_foreign_key "user_coupons", "camps"
+  add_foreign_key "user_coupons", "users"
 end

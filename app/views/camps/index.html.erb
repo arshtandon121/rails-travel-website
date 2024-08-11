@@ -261,6 +261,98 @@ footer {
         padding-top: 80px; /* Adjusted to account for fixed categories */
     }
 
+    .contact-btn {
+        transition: all 0.3s ease;
+        width: 30%;
+        text-align: center;
+        opacity: 0;
+    }
+
+    .contact-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-outline-success:hover {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-outline-info:hover {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .animate-on-scroll {
+        opacity: 0;
+        transition: opacity 0.5s, transform 0.5s;
+    }
+
+    .fadeInDown {
+        animation: fadeInDown 1s forwards;
+    }
+
+    .fadeInLeft {
+        animation: fadeInLeft 1s forwards;
+    }
+
+    .fadeInUp {
+        animation: fadeInUp 1s forwards;
+    }
+
+    .fadeInRight {
+        animation: fadeInRight 1s forwards;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translate3d(0, -50px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translate3d(-50px, 0, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 50px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translate3d(50px, 0, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
     </style>
 </head>
 <body>
@@ -306,25 +398,26 @@ footer {
 
     <section id="contact" class="py-5 bg-light">
         <div class="container">
-            <h2 class="section-title">Get in Touch</h2>
+            <h2 class="section-title text-center mb-4 animate-on-scroll" data-animation="fadeInDown">Get in Touch</h2>
             <div class="row">
                 <div class="col-md-6 mx-auto">
-                    <form>
-                        <div class="mb-3">
-                            <input type="text" class="form-control" placeholder="Your Name">
-                        </div>
-                        <div class="mb-3">
-                            <input type="email" class="form-control" placeholder="Your Email">
-                        </div>
-                        <div class="mb-3">
-                            <textarea class="form-control" rows="5" placeholder="Your Message"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-custom">Send Message</button>
-                    </form>
+                    <div class="d-flex justify-content-around">
+                        <a href="mailto:contact@example.com" class="btn btn-outline-primary contact-btn animate-on-scroll" data-animation="fadeInLeft">
+                            <i class="fas fa-envelope"></i> Email
+                        </a>
+                        <a href="https://wa.me/1234567890" target="_blank" class="btn btn-outline-success contact-btn animate-on-scroll" data-animation="fadeInUp">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                        <a href="tel:+1234567890" class="btn btn-outline-info contact-btn animate-on-scroll" data-animation="fadeInRight">
+                            <i class="fas fa-phone"></i> Call
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
+
+
 
     <footer class="text-center py-4">
         <div class="container">
@@ -403,7 +496,7 @@ footer {
             const targetElement = document.getElementById(targetId);
 
             if (targetElement) {
-                const offset = targetElement.offsetTop - categoriesSection.offsetHeight - 20;
+                const offset = targetElement.offsetTop - categoriesSection.offsetHeight - 50;
                 window.scrollTo({
                     top: offset,
                     behavior: 'smooth'
@@ -412,5 +505,45 @@ footer {
         });
     });
 });
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const emailBtn = document.querySelector('a[href^="mailto:"]');
+    const whatsappBtn = document.querySelector('a[href^="https://wa.me/"]');
+    const callBtn = document.querySelector('a[href^="tel:"]');
+
+    emailBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = this.href;
+    });
+
+    whatsappBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.open(this.href, '_blank');
+    });
+
+    callBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = this.href;
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add(entry.target.dataset.animation);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    animatedElements.forEach(element => {
+        observer.observe(element);
+    });
+});
+
 
 </script>

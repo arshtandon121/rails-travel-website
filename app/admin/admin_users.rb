@@ -5,7 +5,7 @@ ActiveAdmin.register AdminUser do
     before_action :authorize_admin
 
     def authorize_admin
-      redirect_to admin_root_path, alert: "You are not authorized to perform this action." unless current_admin_user&.admin?
+      redirect_to admin_root_path, alert: "You are not authorized to perform this action." unless current_admin_user&.admin? || current_admin_user&.camp_owner?
     end
 
     def scoped_collection

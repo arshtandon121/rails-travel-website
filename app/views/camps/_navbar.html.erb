@@ -19,26 +19,49 @@
     color: #8a2be2 !important;
 }
 
-.navbar-toggler {
-    border-color: #ffa500;
+.options-logo {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
-.navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 165, 0, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+.options-logo.open {
+    transform: rotate(90deg);
+}
+@media (max-width: 991px) {
+    .navbar-collapse {
+        transition: max-height 0.3s ease-out;
+        max-height: 0;
+        overflow: hidden;
+    }
+
+    .navbar-collapse.show {
+        max-height: 300px;
+    }
 }
 
-.navbar-toggler.cross .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 165, 0, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M6 6l18 18M6 24L24 6'/%3e%3c/svg%3e");
+@media (min-width: 992px) {
+    .options-logo {
+        display: none;
+    }
+    
+    .navbar-collapse {
+        display: flex !important;
+    }
 }
-
 </style>
 
 <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
         <%= link_to "Adventure Awaits", root_path, class: "navbar-brand" %>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="options-logo" aria-expanded="false" aria-controls="navbarNav">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ffa500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="12" cy="5" r="1"></circle>
+                <circle cx="12" cy="19" r="1"></circle>
+            </svg>
+        </div>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
@@ -86,15 +109,15 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var navbarToggler = document.querySelector('.navbar-toggler');
+    var optionsLogo = document.querySelector('.options-logo');
     var navbarCollapse = document.querySelector('.navbar-collapse');
 
-    navbarToggler.addEventListener('click', function() {
+    optionsLogo.addEventListener('click', function() {
         // Toggle the 'show' class on the navbar collapse
         navbarCollapse.classList.toggle('show');
         
-        // Toggle the 'cross' class on the navbar toggler
-        this.classList.toggle('cross');
+        // Toggle the 'open' class on the options logo
+        this.classList.toggle('open');
         
         // Toggle the aria-expanded attribute
         var isExpanded = this.getAttribute('aria-expanded') === 'true';
@@ -105,8 +128,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.nav-link').forEach(function(navLink) {
         navLink.addEventListener('click', function() {
             navbarCollapse.classList.remove('show');
-            navbarToggler.classList.remove('cross');
-            navbarToggler.setAttribute('aria-expanded', 'false');
+            optionsLogo.classList.remove('open');
+            optionsLogo.setAttribute('aria-expanded', 'false');
         });
     });
 });

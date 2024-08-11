@@ -3,12 +3,14 @@ class CampsController < ApplicationController
   before_action :set_camp, only: [:show, :edit, :update, :destroy]
   before_action :authorize_user, only: [:edit, :update, :destroy]
 
+  CATEGORY_ORDER = ['camping', 'adventure_activities', 'pre_wedding', 'yoga'].freeze
+
   def index
-    @camps = Camp.all.group_by(&:category).transform_values do |camps|
-      camps.map do |camp|
-        format_camp(camp)
-      end
-    end
+    @camps = Camp.where(authorized: true).group_by(&:category).transform_values do |camps|
+      camps.map { |camp| format_camp(camp) }
+    end.sort_by do |category, _|
+      CATEGORY_ORDER.index(category.downcase) || CATEGORY_ORDER.length
+    end.to_h
   end
 
   def show

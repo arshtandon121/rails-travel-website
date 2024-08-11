@@ -65,6 +65,7 @@ class TwilioController < ApplicationController
 
   def handle_confirmation(booking)
     booking.update(camp_confirmation: true)
+    send_whatsapp_message(booking)
     "Thank you for confirming your booking ##{booking.id}!"
   end
 
@@ -76,4 +77,52 @@ class TwilioController < ApplicationController
   def handle_unexpected_response(from)
     "Unexpected response received. Please reply with 'CONFIRM-[BookingID]' or 'CANCEL-[BookingID]'."
   end
+
+private
+
+def send_whatsapp_message(booking)
+  client = Twilio::REST::Client.new
+  phone_whatsapp = "whatsapp:+14155238886"
+  recipient_whatsapp = "whatsapp:+916239339850"
+
+  booking_details = self.booking_details
+  booking = self
+  body = <<-MESSAGE
+  Hi #{booking.name},
+  
+  Thank you for booking with MY Rishikesh Trip! We're excited to have you.
+  
+  Service Name: #{booking.category} 
+  Booking ID: #{booking.id}
+  Number of Persons: #{booking_details['six_sharing'] + booking_details['quad_sharing'] + booking_details['double_sharing'] + booking_details['triple_sharing']}
+  Six Sharing: #{booking_details['six_sharing']}
+  Quad Sharing: #{booking_details['quad_sharing']}
+  Double Sharing: #{booking_details['double_sharing']}
+  Triple Sharing: #{booking_details['triple_sharing']}
+  Check-In Date: #{booking_details['check_in_date']}
+  Check-out Date: #{booking_details['check_out_date']}
+ 
+  Please let us know if you have any special requests or need further assistance. We're here to make your trip unforgettable!
+  
+  Looking forward to welcoming you!
+  
+  Best regards,
+  MY Rishikesh Trip
+  [Our Mobile Number]
+  MESSAGE
+  
+
+  begin
+    message = client.messages.create(
+      from: phone_whatsapp,
+      to: recipient_whatsapp,
+      body: body,
+      status_callback: 'https://8b58-49-47-69-82.ngrok-free.app/twilio/webhook',
+    )
+    BookingMessage.create(booking_id: booking.id, message_sid: message.sid)
+    Rails.logger.info "Message sent successfully: #{message.sid}"
+  rescue Twilio::REST::RestError => e
+    Rails.logger.error "An error occurred while sending WhatsApp message: #{e.message}"
+  end
+end
 end

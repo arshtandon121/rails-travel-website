@@ -7,8 +7,13 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :camps, foreign_key: 'user_id'
+  has_many :camp_change_requests
+  has_many :user_coupons
 
-         enum role: { user: 0, camp_owner: 1, admin: 2 }
+  enum role: { user: 0, camp_owner: 1, admin: 2 }
+
+  after_save :sync_admin_user
+  after_destroy :destroy_admin_user
 
   def self.ransackable_attributes(auth_object = nil)
       %w[id email name phone created_at updated_at role guest].freeze
@@ -66,4 +71,27 @@ class User < ApplicationRecord
   def user_params
     params.require(:user).permit(:email, :password, :password_confirmation)
   end
+
+
+  def sync_admin_user
+    return unless camp_owner? || admin?
+
+    admin_user = AdminUser.find_or_initialize_by(email: email)
+    admin_user.assign_attributes(
+      encrypted_password: encrypted_password,
+      reset_password_token: reset_password_token,
+      reset_password_sent_at: reset_password_sent_at,
+      remember_created_at: remember_created_at,
+      role: role,
+      guest: guest
+    )
+    admin_user.save
+  end
+
+  def destroy_admin_user
+    admin_user = AdminUser.find_by(email: email)
+    admin_user.&destroy if admin_user.present?
+  end
+
+
 end

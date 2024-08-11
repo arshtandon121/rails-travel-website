@@ -31,11 +31,6 @@
     right: 10px;
   }
 
-  .category-row {
-    position: relative;
-    margin-bottom: 2rem;
-    padding: 0 20px;
-  }
 
   .camp-scroll-container {
     display: flex;
@@ -245,6 +240,69 @@
     background-color: #8a2be2 !important;
     color: #f0f0f0;
 }
+
+@media (max-width: 768px) {
+  .camp-card {
+    flex: 0 0 220px; /* Reduced from 300px */
+  }
+
+  .category-row {
+    margin-right: 2.9rem;
+    margin-bottom: 2rem;
+    padding: 0 10px 0px 15px;
+  }
+  .camp-images {
+    height: 150px; /* Reduced from 200px */
+  }
+
+  .camp-details {
+    padding: 0.75rem;
+  }
+
+  .camp-details h3 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .camp-rating {
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .camp-details p {
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .camp-price {
+    font-size: 1rem;
+    margin-top: 0.25rem;
+  }
+
+  .view-details-btn {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+
+  .scroll-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+
+  .camp-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .carousel-dots .dot {
+    width: 8px;
+    height: 8px;
+    margin: 0 3px;
+  }
+}
+
   </style>
 
   <div class="category-row">
@@ -276,14 +334,7 @@
           <p><i class="fas fa-clock"></i> <%= camp[:duration] %></p>
 
           <% if category == "adventure_activities" %>
-            <div class="mb-3">
-              <select id="select-<%= camp[:id] %>" class="form-select">
-                <option value="11" data-price="<%= camp[:per_km] %>">11 km</option>
-                <option value="16" data-price="<%= camp[:per_km] %>">16 km</option>
-                <option value="24" data-price="<%= camp[:per_km] %>">24 km</option>
-              </select>
-              <p id="price-<%= camp[:id] %>" class="mt-2">Price: INR <%= camp[:per_km] * 11 %></p>
-            </div>
+           
           <% else %>
             <p class="camp-price">INR <%= camp[:price] %></p>
           <% end %>
@@ -302,110 +353,113 @@
   </div>
   <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const categoryRows = document.querySelectorAll('.category-row');
+  const categoryRows = document.querySelectorAll('.category-row');
 
-    categoryRows.forEach(row => {
-      const scrollContainer = row.querySelector('.camp-scroll-container');
-      const prevBtn = row.querySelector('.prev-btn');
-      const nextBtn = row.querySelector('.next-btn');
+  categoryRows.forEach(row => {
+    const scrollContainer = row.querySelector('.camp-scroll-container');
+    const prevBtn = row.querySelector('.prev-btn');
+    const nextBtn = row.querySelector('.next-btn');
 
-      if (scrollContainer && prevBtn && nextBtn) {
-        prevBtn.addEventListener('click', () => {
-          scrollContainer.scrollBy({ left: -300, behavior: 'smooth' });
-        });
+    if (scrollContainer && prevBtn && nextBtn) {
+      let isScrolling = false;
+      let startX;
+      let scrollLeft;
+      let momentumID;
 
-        nextBtn.addEventListener('click', () => {
-          scrollContainer.scrollBy({ left: 300, behavior: 'smooth' });
-        });
+      function smoothScroll(target, duration) {
+        const start = scrollContainer.scrollLeft;
+        const distance = target - start;
+        let startTime = null;
 
-        function toggleScrollButtons() {
-          prevBtn.style.display = scrollContainer.scrollLeft > 0 ? 'flex' : 'none';
-          nextBtn.style.display = 
-            scrollContainer.scrollLeft < scrollContainer.scrollWidth - scrollContainer.clientWidth 
-              ? 'flex' 
-              : 'none';
+        function animation(currentTime) {
+          if (startTime === null) startTime = currentTime;
+          const timeElapsed = currentTime - startTime;
+          const run = ease(timeElapsed, start, distance, duration);
+          scrollContainer.scrollLeft = run;
+          if (timeElapsed < duration) requestAnimationFrame(animation);
         }
 
-        scrollContainer.addEventListener('scroll', toggleScrollButtons);
-        window.addEventListener('resize', toggleScrollButtons);
-        toggleScrollButtons();
-
-        // Handle touch events for scrolling
-        let startX = 0;
-        let scrollLeft = 0;
-
-        scrollContainer.addEventListener('touchstart', function(e) {
-          startX = e.touches[0].pageX - scrollContainer.offsetLeft;
-          scrollLeft = scrollContainer.scrollLeft;
-        });
-
-        scrollContainer.addEventListener('touchmove', function(e) {
-          const x = e.touches[0].pageX - scrollContainer.offsetLeft;
-          const walk = (x - startX) * 1.5; // Multiplied by 1.5 for a smoother scroll
-          scrollContainer.scrollLeft = scrollLeft - walk;
-        });
-
-        scrollContainer.addEventListener('touchend', function(e) {
-          // Smooth scroll after touchend
-          const deltaX = e.changedTouches[0].pageX - startX;
-          scrollContainer.scrollBy({ left: -deltaX, behavior: 'smooth' });
-        });
-      }
-    });
-  });
-
-  document.addEventListener('DOMContentLoaded', function() {
-    const carousels = document.querySelectorAll('.image-carousel');
-
-    carousels.forEach(carousel => {
-      let currentIndex = 0;
-      const images = carousel.querySelectorAll('img');
-      const dots = document.querySelectorAll(`#dots-${carousel.id.split('-')[1]} .dot`);
-      const totalImages = images.length;
-
-      function showSlide(index) {
-        images.forEach((img, i) => {
-          img.classList.toggle('active', i === index);
-        });
-        dots.forEach((dot, i) => {
-          dot.classList.toggle('active', i === index);
-        });
-      }
-
-      function nextSlide() {
-        currentIndex = (currentIndex + 1) % totalImages;
-        showSlide(currentIndex);
-      }
-
-      dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-          currentIndex = parseInt(dot.dataset.index, 10);
-          showSlide(currentIndex);
-        });
-      });
-
-      setInterval(nextSlide, 2000); // Change image every 2 seconds
-    });
-
-    const adventureSelects = document.querySelectorAll('select[id^="select-"]');
-    
-    adventureSelects.forEach(select => {
-      select.addEventListener('change', function() {
-        const campId = this.id.split('-')[1];
-        const priceElement = document.getElementById(`price-${campId}`);
-        const selectedOption = this.options[this.selectedIndex];
-        const kmValue = parseInt(this.value);
-        const pricePerKm = parseFloat(selectedOption.dataset.price);
-        
-        if (priceElement && !isNaN(kmValue) && !isNaN(pricePerKm)) {
-          const totalPrice = kmValue * pricePerKm;
-          priceElement.textContent = `Price: INR ${totalPrice.toFixed(2)}`;
+        function ease(t, b, c, d) {
+          t /= d / 2;
+          if (t < 1) return c / 2 * t * t + b;
+          t--;
+          return -c / 2 * (t * (t - 2) - 1) + b;
         }
+
+        requestAnimationFrame(animation);
+      }
+
+      function toggleScrollButtons() {
+        prevBtn.style.display = scrollContainer.scrollLeft > 0 ? 'flex' : 'none';
+        nextBtn.style.display = 
+          scrollContainer.scrollLeft < scrollContainer.scrollWidth - scrollContainer.clientWidth 
+            ? 'flex' 
+            : 'none';
+      }
+
+      prevBtn.addEventListener('click', () => {
+        smoothScroll(scrollContainer.scrollLeft - 300, 500);
       });
-    });
+
+      nextBtn.addEventListener('click', () => {
+        smoothScroll(scrollContainer.scrollLeft + 300, 500);
+      });
+
+      scrollContainer.addEventListener('scroll', toggleScrollButtons);
+      window.addEventListener('resize', toggleScrollButtons);
+      toggleScrollButtons();
+
+      // Touch and mouse events for smooth scrolling
+      scrollContainer.addEventListener('mousedown', startDrag);
+      scrollContainer.addEventListener('touchstart', startDrag);
+      scrollContainer.addEventListener('mousemove', drag);
+      scrollContainer.addEventListener('touchmove', drag);
+      scrollContainer.addEventListener('mouseup', endDrag);
+      scrollContainer.addEventListener('mouseleave', endDrag);
+      scrollContainer.addEventListener('touchend', endDrag);
+
+      function startDrag(e) {
+        isScrolling = true;
+        startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
+        scrollLeft = scrollContainer.scrollLeft;
+        cancelMomentumTracking();
+      }
+
+      function drag(e) {
+        if (!isScrolling) return;
+        e.preventDefault();
+        const x = e.type === 'mousemove' ? e.pageX : e.touches[0].pageX;
+        const walk = (x - startX) * 2;
+        scrollContainer.scrollLeft = scrollLeft - walk;
+      }
+
+      function endDrag() {
+        isScrolling = false;
+        beginMomentumTracking();
+      }
+
+      function beginMomentumTracking() {
+        cancelMomentumTracking();
+        momentumID = requestAnimationFrame(momentumLoop);
+      }
+
+      function cancelMomentumTracking() {
+        cancelAnimationFrame(momentumID);
+      }
+
+      function momentumLoop() {
+        const currentScroll = scrollContainer.scrollLeft;
+        const delta = currentScroll - scrollLeft;
+        scrollLeft = currentScroll;
+
+        if (Math.abs(delta) > 0.5) {
+          momentumID = requestAnimationFrame(momentumLoop);
+          scrollContainer.scrollLeft += delta * 0.95;
+        }
+      }
+    }
   });
-
-
+});
 
 
   </script>

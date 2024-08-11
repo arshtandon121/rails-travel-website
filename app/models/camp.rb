@@ -2,15 +2,20 @@ class Camp < ApplicationRecord
   has_many :payments
   has_many :bookings
   belongs_to :user
+  has_one :margin
+  has_many :camp_change_requests
 
+  has_many :camp_coupons
+  has_many :user_coupons
+  
   enum category: { camping: 0, adventure_activities: 1, yoga: 2, pre_wedding: 3 }
 
   def self.ransackable_attributes(auth_object = nil)
-    ["available", "camp_pic", "category", "created_at", "details", "id", "name", "person", "price", "updated_at"]
+    ["available", "camp_pic", "category", "authorized", "created_at", "details", "id", "name", "person", "price", "updated_at"]
   end
 
   def self.ransackable_associations(auth_object = nil)
-    ["user", "bookings", "payments"]
+    ["user", "bookings", "payments","margin"]
   end
 
   META = [:per_km, :camp_duration, :location, :rating, :feature, :double_price, :triple_price, :quad_price, :six_price]

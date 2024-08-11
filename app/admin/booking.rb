@@ -5,10 +5,33 @@ ActiveAdmin.register Booking do
   
     controller do
         before_action :authorize_user
-    
-        def authorize_user
-          redirect_to admin_dashboard_path, alert: "You are not authorized to perform this action." unless current_user.admin?
+        before_action :authorize_admin, only: [:new, :create]
+      
+        def scoped_collection
+          end_of_association_chain.page(params[:page]).per(10)
         end
+    
+        def index
+          super do |format|
+            @bookings = scoped_collection
+            @bookings = @bookings.joins(:camp).where(camps: { user_id: current_user.id }) unless current_user.admin?
+          end
+        end
+          private
+
+          def authorize_user
+            unless current_admin_user.admin? || current_admin_user.camp_owner?
+              redirect_to admin_dashboard_path, alert: "You are not authorized to perform this action."
+            end
+          end
+
+          def authorize_admin
+            unless current_user.admin?
+              redirect_to admin_root_path, alert: "You are not authorized to perform this action."
+            end
+          end
+      
+          
     end
 
       
@@ -91,19 +114,21 @@ ActiveAdmin.register Booking do
     end
   
     form do |f|
-      f.inputs "Booking Details" do
-        f.input :booking_details
-        f.input :camp_confirmation
-        f.input :camp
-        f.input :email
-        f.input :name
-        f.input :payment_confirmation
-        f.input :payment
-        f.input :phone
-        f.input :razorpay_order_id
-        f.input :user
+      if current_user.admin?
+        f.inputs "Booking Details" do
+          f.input :booking_details
+          f.input :camp_confirmation
+          f.input :camp
+          f.input :email
+          f.input :name
+          f.input :payment_confirmation
+          f.input :payment
+          f.input :phone
+          f.input :razorpay_order_id
+          f.input :user
+        end
+        f.actions
       end
-      f.actions
     end
   end
   

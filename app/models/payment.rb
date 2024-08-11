@@ -3,15 +3,18 @@ class Payment < ApplicationRecord
   belongs_to :camp
   belongs_to :user, optional: true
 
+  attribute :payment_cleared_to_camp, :boolean, default: false
+
   enum status: {
     pending: 0,
     completed: 1,
     failed: 2
   }
+  
 
   def self.ransackable_attributes(auth_object = nil)
     # List the attributes you want to make searchable
-    ["amount", "booking_id", "camp_id", "created_at", "id", "payment_details", "status", "updated_at", "user_email", "user_id", "user_name", "user_phone"]
+    ["amount", "booking_id", "camp_id", "created_at", "id", "payment_details", "status", "updated_at", "user_email", "user_id", "user_name", "user_phone", "payment_cleared_to_camp_eq"]
   end
 
   def self.ransackable_associations(auth_object = nil)

@@ -143,11 +143,11 @@
                   </li>
                   <li class="list-group-item d-flex justify-content-between align-items-center">
                     Check-in Date
-                    <span><%= @booking.booking_details['check_in_date'] %></span>
+                    <span><%= @booking&.booking_details['check_in_date'] %></span>
                   </li>
                   <li class="list-group-item d-flex justify-content-between align-items-center">
                     Check-out Date
-                    <span><%= @booking.booking_details['check_out_date'] %></span>
+                    <span><%= @booking&.booking_details['check_out_date'] %></span>
                   </li>
                   <li class="list-group-item d-flex justify-content-between align-items-center">
                     Total Price

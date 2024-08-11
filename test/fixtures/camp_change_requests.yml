@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  camp: one
+  name: MyString
+  price: 9.99
+  person: 1
+  available: false
+  category: MyString
+  details: MyText
+  user: one
+  status: 1
+
+two:
+  camp: two
+  name: MyString
+  price: 9.99
+  person: 1
+  available: false
+  category: MyString
+  details: MyText
+  user: two
+  status: 1

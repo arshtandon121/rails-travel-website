@@ -23,7 +23,8 @@ class BookingsController < ApplicationController
       double_sharing: params[:double_sharing],
       triple_sharing: params[:triple_sharing],
       quad_sharing: params[:quad_sharing],
-      six_sharing: params[:six_sharing]
+      six_sharing: params[:six_sharing],
+      number_of_persons: params[:hidden_number_of_persons]
     }
     
     # Add distance to booking details if camp category is "adventure_activities"

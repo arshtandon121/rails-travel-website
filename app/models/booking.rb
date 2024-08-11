@@ -3,7 +3,9 @@ class Booking < ApplicationRecord
   belongs_to :payment, optional: true
   has_many :booking_messages
   belongs_to :user, optional: true  # Make sure this line ends with a comma if it's not the last association
+  
   after_create  :send_whatsapp_message
+
 
   validates :razorpay_order_id, presence: true, uniqueness: true
   validates :name, presence: true
@@ -30,20 +32,29 @@ class Booking < ApplicationRecord
     booking_details = self.booking_details
     booking = self
     body = <<-MESSAGE
-    Booking Confirmation for #{booking.name}:
-
-    Camp ID: #{booking.camp_id}
-    Payment ID: #{booking.payment_id}
-    Razorpay Order ID: #{booking.razorpay_order_id}
-    Check-in Date: #{booking_details['check_in_date']}
-    Check-out Date: #{booking_details['check_out_date']}
+    Hello #{booking.camp.user.email},
+    
+    We have a new booking that requires your confirmation.
+    
+    Booking Details:
+    
+    Customer Name: #{booking.name}
+    Booking ID: #{booking.id}
+    Number of Persons: #{booking_details['six_sharing'] + booking_details['quad_sharing'] + booking_details['double_sharing'] + booking_details['triple_sharing']}
     Six Sharing: #{booking_details['six_sharing']}
     Quad Sharing: #{booking_details['quad_sharing']}
     Double Sharing: #{booking_details['double_sharing']}
     Triple Sharing: #{booking_details['triple_sharing']}
-    Total Price: $#{booking_details['total_price']}
+    Check-In Date: #{booking_details['check_in_date']}
+    Check-out Date: #{booking_details['check_out_date']}
     
     Please reply with 'CONFIRM-#{booking.id}' to confirm or 'CANCEL-#{booking.id}' to cancel your booking.
+    
+    Best regards,
+    MY Rishikesh Trip
+    [Our Mobile Number]
+
+   
       MESSAGE
 
     begin
