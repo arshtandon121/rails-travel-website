@@ -24,7 +24,9 @@ class BookingsController < ApplicationController
       triple_sharing: params[:triple_sharing],
       quad_sharing: params[:quad_sharing],
       six_sharing: params[:six_sharing],
-      number_of_persons: params[:hidden_number_of_persons]
+      number_of_persons: params[:hidden_number_of_persons],
+      user_coupon_used: params[:applied_coupon_id].present? ? true : false,
+      user_coupon_code: params[:applied_coupon_id].present? ? params[:applied_coupon_id] : nil
     }
     
     # Add distance to booking details if camp category is "adventure_activities"
@@ -53,6 +55,10 @@ class BookingsController < ApplicationController
         booking: booking,
         user: user
       )
+      
+      # mark coupon as used 
+      user_coupon = UserCoupon.find_by(code: params[:applied_coupon_id])
+      user_coupon.update(used: true)
 
       # Update the booking with the payment
       booking.update(payment: payment)

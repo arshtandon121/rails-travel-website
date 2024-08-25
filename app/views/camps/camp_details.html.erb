@@ -336,6 +336,12 @@
         margin-right: 5px;
     }
 
+.purchase-box {
+  position: sticky;
+  top: 50px; /* Adjust as needed */
+  z-index: 1000; /* Ensure it stays on top of other content */
+}
+
     </style>
 </head>
 <body>
@@ -348,7 +354,7 @@
                     <% end %>
                 </div>
                         
-                <div class="camp-details">
+                <div class="camp-details purchase-box">
                     <h1 class="mb-4"><%= @camp.name %></h1>
                     <div class="camp-info mb-4">
                         <span class="camp-duration"><i class="fas fa-clock"></i> <%= @camp.camp_duration %></span>
@@ -424,11 +430,38 @@
                                 </div>
                             </div>
                             <% end %>
+
+                            <% if @camp.category == "adventure_activities" %>
+    <div id="adventure-price-info">
+        <span id="adventure-price"></span>
+        <span id="adventure-per-person" class="per-person-price"></span>
+    </div>
+    <input type="number" id="number_of_persons" name="number_of_persons" min="1" value="1">
+<% else %>
+    <div id="double-sharing-info">
+        <span id="double-price"></span>
+        <span id="double-per-person" class="per-person-price"></span>
+    </div>
+    <div id="triple-sharing-info">
+        <span id="triple-price"></span>
+        <span id="triple-per-person" class="per-person-price"></span>
+    </div>
+    <div id="quad-sharing-info">
+        <span id="quad-price"></span>
+        <span id="quad-per-person" class="per-person-price"></span>
+    </div>
+    <div id="six-sharing-info">
+        <span id="six-price"></span>
+        <span id="six-per-person" class="per-person-price"></span>
+    </div>
+<% end %>
+
+
                     <% end %>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="purchase-box mt-1">
+                <div class="mt-1">
                     <h2 class="mb-3">Book Your Adventure</h2>
                     <h3 id="display-price" class="text-primary mb-4">₹<%= number_with_delimiter(@camp.price) %></h3>
                     <button id="book-now-btn" class="btn btn-lg btn-purchase w-100 mb-3">Book Now</button>
@@ -610,72 +643,108 @@
         return selectedDistance * pricePerKm;
     }
     
-    function updatePrice() {
-        let totalPrice = 0;
-        let sharingDetails = {};
-        let margin = parseFloat('<%= @camp.margin.margin %>') || 0;
-        $('.coupon-section').hide();
-    
-        let checkIn = $('#check-in-date').val();
-        let checkOut = $('#check-out-date').val();
-    
-        if (!checkIn || !checkOut) {
-            $('#display-price').text('₹0.00');
-            return 0;
-        }
-    
-        <% if @camp.category == "adventure_activities" %>
-            <% if @camp.name.downcase.include?("rafting") %>
-                totalPrice = calculateAdventurePrice() + margin;
-            <% else %>
-                let numberOfPersons = parseInt($('#number_of_persons').val()) || 1;
-                totalPrice = (parseFloat(<%= @camp.price %>) + margin) * numberOfPersons;
-            <% end %>
-        <% else %>
-            ['double', 'triple', 'quad', 'six'].forEach(sharing => {
-                let quantity = parseInt($(`#${sharing}-sharing`).val()) || 0;
-                let perPersonPrice = campDetails[`${sharing}_price`] + margin || 0;
-                let multiplier = sharing === 'double' ? 2 : (sharing === 'triple' ? 3 : (sharing === 'quad' ? 4 : 6));
-                let sharingPrice = perPersonPrice * multiplier;
-                totalPrice += quantity * sharingPrice;
-                sharingDetails[`${sharing}_sharing`] = quantity;
-    
-                $(`#${sharing}-price`).text('₹' + sharingPrice.toFixed(2));
-                $(`#${sharing}-per-person`).text('(₹' + perPersonPrice.toFixed(2) + ' per person)');
-            });
-        <% end %>
-    
-        let couponDiscount = parseFloat($('#coupon-discount').text().replace('₹', '')) || 0;
-        console.log("couponDiscount",couponDiscount)
-        
-        totalPrice = Math.max(0, totalPrice - couponDiscount);
-        console.log("totalPrice",totalPrice)
-    
-        if (totalPrice > 100) {
-            $('.coupon-section').show();
-            
-        } else {
-            $('.coupon-section').hide();
-            $('#applied-coupon').text('');
-            $('#coupon-discount').text('₹0.00');
-            $('#applied_coupon_id').val('');
-        }
-    
-        $('#display-price').text('₹' + totalPrice.toFixed(2));
-    
-        Object.keys(sharingDetails).forEach(key => {
-            $(`#${key}`).val(sharingDetails[key]);
-        });
-        $('#total_price').val(totalPrice.toFixed(2));
-        $('#check_in_date').val(checkIn);
-        $('#check_out_date').val(checkOut);
-    
-        if (typeof options !== 'undefined') {
-            options.amount = totalPrice * 100;
-        }
-    
-        return totalPrice;
+  function updatePrice() {
+    let totalPrice = 0;
+    let sharingDetails = {};
+    let margin = parseFloat('<%= @camp.margin.margin %>') || 0;
+    $('.coupon-section').hide();
+
+    let checkIn = $('#check-in-date').val();
+    let checkOut = $('#check-out-date').val();
+
+    if (!checkIn || !checkOut) {
+        $('#display-price').text('₹0.00');
+        return 0;
     }
+
+    $.ajax({
+        url: '/get_day_prices',
+        method: 'GET',
+        data: {
+            camp_id: '<%= @camp.id %>',
+            check_in: checkIn,
+            check_out: checkOut
+        },
+        success: function(response) {
+            let dayPrices = response.day_prices;
+            let category = response.category;
+
+            if (category === "adventure_activities") {
+                if ('<%= @camp.name.downcase.include?("rafting") %>' === 'true') {
+                    let selectedDistance = $('input[name="distance"]:checked').val();
+                    let perKmPrice = dayPrices['adventure'].per_km_price + margin;
+                    totalPrice = perKmPrice * selectedDistance;
+
+                    $('#adventure-price').text('₹' + totalPrice.toFixed(2));
+                    $('#adventure-per-km').text('(₹' + perKmPrice.toFixed(2) + ' per km)');
+                    $('#adventure-per-km').show();
+                } else {
+                    let perPersonPrice = dayPrices['adventure'].per_person_price + margin;
+                    let numberOfPersons = parseInt($('#number_of_persons').val()) || 1;
+                    totalPrice = perPersonPrice * numberOfPersons;
+
+                    $('#adventure-price').text('₹' + totalPrice.toFixed(2));
+                    $('#adventure-per-person').text('(₹' + perPersonPrice.toFixed(2) + ' per person)');
+                    $('#adventure-per-person').show();
+                }
+            } else {
+                ['double', 'triple', 'quad', 'six'].forEach(sharing => {
+                    let quantity = parseInt($(`#${sharing}-sharing`).val()) || 0;
+                    let sharingPrice = 0;
+                    let perPersonPrice = 0;
+
+                    for (let date in dayPrices) {
+                        sharingPrice += dayPrices[date][sharing].total_price;
+                        perPersonPrice += dayPrices[date][sharing].per_person_price;
+                    }
+
+                    sharingPrice += margin * response.total_days;
+                    perPersonPrice += (margin * response.total_days) / (sharing === 'double' ? 2 : (sharing === 'triple' ? 3 : (sharing === 'quad' ? 4 : 6)));
+
+                    totalPrice += quantity * sharingPrice;
+                    sharingDetails[`${sharing}_sharing`] = quantity;
+
+                    $(`#${sharing}-price`).text('₹' + sharingPrice.toFixed(2));
+                    $(`#${sharing}-per-person`).text('(₹' + perPersonPrice.toFixed(2) + ' per person)');
+                    $(`#${sharing}-per-person`).show();
+                });
+            }
+
+            let couponDiscount = parseFloat($('#coupon-discount').text().replace('₹', '')) || 0;
+            totalPrice = Math.max(0, totalPrice - couponDiscount);
+
+            if (totalPrice > 100) {
+                $('.coupon-section').show();
+            } else {
+                $('.coupon-section').hide();
+                $('#applied-coupon').text('');
+                $('#coupon-discount').text('₹0.00');
+                $('#applied_coupon_id').val('');
+            }
+
+            $('#display-price').text('₹' + totalPrice.toFixed(2));
+
+            if (category !== "adventure_activities") {
+                Object.keys(sharingDetails).forEach(key => {
+                    $(`#${key}`).val(sharingDetails[key]);
+                });
+            }
+
+            $('#total_price').val(totalPrice.toFixed(2));
+            $('#check_in_date').val(checkIn);
+            $('#check_out_date').val(checkOut);
+
+            if (typeof options !== 'undefined') {
+                options.amount = totalPrice * 100;
+            }
+
+            fetchUserCoupons(totalPrice);
+        },
+        error: function() {
+            showNotification('Error calculating prices. Please try again.', 'error');
+        }
+    });
+}
     
     function changeQuantity(sharing, change) {
         let checkIn = $('#check-in-date').val();
@@ -1016,7 +1085,7 @@
         <% if ENV['RAZORPAY_KEY_ID'] %>
             var options = {
                 key: "<%= ENV['RAZORPAY_KEY_ID'] %>",
-                amount: "<%= (@camp.price * 100).to_i %>",
+                amount: 0,
                 currency: "INR",
                 name: "<%= @camp.name %>",
                 description: "Camp Booking",
@@ -1052,12 +1121,14 @@
         const decreaseButton = document.getElementById('decrease-persons');
         const increaseButton = document.getElementById('increase-persons');
         const numberOfPersonsInput = document.getElementById('number_of_persons');
+         var hiddenNumberOfPersons = document.querySelector('input[name="hidden_number_of_persons"]');
     
         if (decreaseButton && increaseButton && numberOfPersonsInput) {
             decreaseButton.addEventListener('click', function() {
                 let currentValue = parseInt(numberOfPersonsInput.value, 10);
                 if (currentValue > 1) {
                     numberOfPersonsInput.value = currentValue - 1;
+                    hiddenNumberOfPersons.value = numberOfPersonsInput.value;
                     updatePrice();
                 }
             });
@@ -1065,6 +1136,7 @@
             increaseButton.addEventListener('click', function() {
                 let currentValue = parseInt(numberOfPersonsInput.value, 10);
                 numberOfPersonsInput.value = currentValue + 1;
+                  hiddenNumberOfPersons.value = numberOfPersonsInput.value;
                 updatePrice();
             });
         }

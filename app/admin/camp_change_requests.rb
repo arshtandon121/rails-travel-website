@@ -17,7 +17,7 @@ ActiveAdmin.register CampChangeRequest do
       before_action :authorize_admin, only: [:edit, :update, :destroy]
   
       def authorize_camp_owner
-        unless current_user.camp_owner?
+        unless current_user.camp_owner? || current_user.admin?
           redirect_to admin_camp_change_requests_path, alert: "You are not authorized to perform this action."
         end
       end

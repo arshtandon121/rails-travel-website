@@ -20,6 +20,9 @@ Rails.application.routes.draw do
     post 'payment_success', on: :collection
   end
 
+  # get daily price
+  get 'get_day_prices', to: 'camps#get_day_prices'
+
   post '/webhooks/razorpay', to: 'webhooks#razorpay'
  
   get 'custom_admin_dashboard', to: 'admin#dashboard', as: :custom_admin_dashboard

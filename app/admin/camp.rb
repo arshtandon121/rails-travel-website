@@ -1,5 +1,8 @@
 ActiveAdmin.register Camp do
-  permit_params :name, :price, :person, :available, :category, :details, :user_id
+  permit_params :name, :price, :person, :available, :category, :details, :user_id, 
+                :per_km, :camp_duration, :location, :rating, :feature, 
+                :double_price, :triple_price, :quad_price, :six_price, :camp_pic
+
   filter :name
   filter :price
   filter :category
@@ -10,7 +13,7 @@ ActiveAdmin.register Camp do
   filter :rating
 
   controller do
-    before_action :authorize_user, only: [ :show]
+    before_action :authorize_user, only: [:show]
     before_action :check_delete_access, only: [:destroy]
     before_action :authorize_admin, only: [:new, :create]
     
@@ -55,6 +58,7 @@ ActiveAdmin.register Camp do
           f.input meta_field
         end
         f.input :details, as: :text
+        f.input :camp_pic, as: :text
       end
       f.actions
     end

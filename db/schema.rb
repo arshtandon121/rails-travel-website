@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_08_10_111910) do
+ActiveRecord::Schema[7.0].define(version: 2024_08_24_054843) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -95,11 +95,26 @@ ActiveRecord::Schema[7.0].define(version: 2024_08_10_111910) do
   create_table "camp_coupons", force: :cascade do |t|
     t.bigint "camp_id", null: false
     t.decimal "min_price", precision: 10, scale: 2, null: false
-    t.decimal "discount", precision: 5, scale: 2, null: false
+    t.decimal "discount", precision: 8, scale: 2, null: false
     t.boolean "active", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["camp_id"], name: "index_camp_coupons_on_camp_id"
+  end
+
+  create_table "camp_prices", force: :cascade do |t|
+    t.bigint "camp_id", null: false
+    t.decimal "per_km"
+    t.json "week_days", default: {"monday"=>nil, "tuesday"=>nil, "wednesday"=>nil, "thursday"=>nil, "friday"=>nil, "saturday"=>nil, "sunday"=>nil}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "sharing_enabled", default: false
+    t.boolean "double_sharing_enabled", default: false
+    t.boolean "triple_sharing_enabled", default: false
+    t.boolean "quad_sharing_enabled", default: false
+    t.boolean "six_sharing_enabled", default: false
+    t.json "meta", default: {}
+    t.index ["camp_id"], name: "index_camp_prices_on_camp_id"
   end
 
   create_table "camps", force: :cascade do |t|
@@ -148,7 +163,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_08_10_111910) do
     t.string "code", limit: 12, null: false
     t.boolean "used", default: false
     t.decimal "min_price", precision: 10, scale: 2, null: false
-    t.decimal "discount", precision: 5, scale: 2, null: false
+    t.decimal "discount", precision: 8, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["camp_id"], name: "index_user_coupons_on_camp_id"
@@ -179,6 +194,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_08_10_111910) do
   add_foreign_key "camp_change_requests", "camps"
   add_foreign_key "camp_change_requests", "users"
   add_foreign_key "camp_coupons", "camps"
+  add_foreign_key "camp_prices", "camps"
   add_foreign_key "margins", "camps"
   add_foreign_key "payments", "bookings"
   add_foreign_key "payments", "camps"

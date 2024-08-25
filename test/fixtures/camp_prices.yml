@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  per_km: 9.99
+  double_price: 9.99
+  triple_price: 9.99
+  quad_price: 9.99
+  six_price: 9.99
+  week_days: 
+  camp: one
+
+two:
+  per_km: 9.99
+  double_price: 9.99
+  triple_price: 9.99
+  quad_price: 9.99
+  six_price: 9.99
+  week_days: 
+  camp: two
