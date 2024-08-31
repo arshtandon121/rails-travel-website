@@ -24,7 +24,8 @@ class CampsController < ApplicationController
       day_prices = {
         'adventure' => {
           total_price: per_person_price,
-          per_person_price: per_person_price
+          per_person_price: per_person_price,
+          total_days: (check_out - check_in).to_i,
         }
       }
     else

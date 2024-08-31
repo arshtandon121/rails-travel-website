@@ -14,71 +14,28 @@ class Camp < ApplicationRecord
 
   # Ransackable attributes and associations for search functionality
   def self.ransackable_attributes(auth_object = nil)
-    ["available", "camp_pic", "category", "authorized", "created_at", "details", "id", "name", "person", "price", "updated_at"]
+    ["available", "camp_pic", "category", "authorized", "created_at", "details", "id", "name", "person","rating", "updated_at"]
   end
 
   def self.ransackable_associations(auth_object = nil)
     ["user", "bookings", "payments", "margin"]
   end
 
-  # Meta fields with getter and setter methods
-  META = [:per_km, :camp_duration, :location, :rating, :feature, :double_price, :triple_price, :quad_price, :six_price]
+ 
 
-  META.each do |field|
-    define_method(field) do
-      details&.[](field.to_s)
-    end
+  def migrate_details_to_columns
+    return unless details.is_a?(Hash)
 
-    define_method("#{field}=") do |value|
-      self.details ||= {}
-      self.details = parse_details
-      self.details[field.to_s] = value
-      save
-    end
+    update(
+      description: details['description'],
+      per_km: details['per_km'],
+      camp_duration: details['camp_duration'],
+      location: details['location'],
+      rating: details['rating'],
+      feature: details['feature']
+    )
   end
 
-  # Ensure `details` is a Hash
-  def parse_details
-    return {} unless details.present?
-
-    if details.is_a?(String)
-      begin
-        JSON.parse(details)
-      rescue JSON::ParserError
-        {}
-      end
-    elsif details.is_a?(Hash)
-      details
-    else
-      {}
-    end
-  end
-
-  # Override `method_missing` to handle dynamic methods
-  def method_missing(method_name, *arguments, &block)
-    if details.is_a?(Hash) && details.key?(method_name.to_s)
-      details[method_name.to_s]
-    elsif method_name.to_s.end_with?('?')
-      details.is_a?(Hash) && details.key?(method_name.to_s.chop)
-    elsif method_name.to_s.end_with?('=') && arguments.size == 1
-      field = method_name.to_s.chomp('=')
-      if META.include?(field.to_sym)
-        self.details = parse_details.merge(field => arguments.first)
-      else
-        super
-      end
-    else
-      super
-    end
-  end
-
-  # Respond to dynamic methods
-  def respond_to_missing?(method_name, include_private = false)
-    (details.is_a?(Hash) && details.key?(method_name.to_s)) || 
-    (method_name.to_s.end_with?('?') && details.is_a?(Hash) && details.key?(method_name.to_s.chop)) ||
-    (method_name.to_s.end_with?('=') && META.include?(method_name.to_s.chomp('=').to_sym)) ||
-    super
-  end
 
   # Export camp data to CSV
   def self.to_csv

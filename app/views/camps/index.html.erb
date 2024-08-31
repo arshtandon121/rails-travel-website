@@ -288,71 +288,35 @@ footer {
         color: white;
     }
 
-    .animate-on-scroll {
+  .animate-on-scroll {
         opacity: 0;
         transition: opacity 0.5s, transform 0.5s;
     }
-
-    .fadeInDown {
-        animation: fadeInDown 1s forwards;
-    }
-
-    .fadeInLeft {
-        animation: fadeInLeft 1s forwards;
-    }
-
-    .fadeInUp {
-        animation: fadeInUp 1s forwards;
-    }
-
-    .fadeInRight {
-        animation: fadeInRight 1s forwards;
-    }
-
+    
+    .fadeInDown { animation: fadeInDown 1s forwards; }
+    .fadeInLeft { animation: fadeInLeft 1s forwards; }
+    .fadeInUp { animation: fadeInUp 1s forwards; }
+    .fadeInRight { animation: fadeInRight 1s forwards; }
+    
     @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translate3d(0, -50px, 0);
-        }
-        to {
-            opacity: 1;
-            transform: translate3d(0, 0, 0);
-        }
+        from { opacity: 0; transform: translate3d(0, -50px, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
     }
-
+    
     @keyframes fadeInLeft {
-        from {
-            opacity: 0;
-            transform: translate3d(-50px, 0, 0);
-        }
-        to {
-            opacity: 1;
-            transform: translate3d(0, 0, 0);
-        }
+        from { opacity: 0; transform: translate3d(-50px, 0, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
     }
-
+    
     @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translate3d(0, 50px, 0);
-        }
-        to {
-            opacity: 1;
-            transform: translate3d(0, 0, 0);
-        }
+        from { opacity: 0; transform: translate3d(0, 50px, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
     }
-
+    
     @keyframes fadeInRight {
-        from {
-            opacity: 0;
-            transform: translate3d(50px, 0, 0);
-        }
-        to {
-            opacity: 1;
-            transform: translate3d(0, 0, 0);
-        }
+        from { opacity: 0; transform: translate3d(50px, 0, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
     }
-
     </style>
 </head>
 <body>
@@ -396,39 +360,38 @@ footer {
         </div>
     </section>
 
-    <section id="contact" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="section-title text-center mb-4 animate-on-scroll" data-animation="fadeInDown">Get in Touch</h2>
-            <div class="row">
-                <div class="col-md-6 mx-auto">
-                    <div class="d-flex justify-content-around">
-                        <a href="mailto:contact@example.com" class="btn btn-outline-primary contact-btn animate-on-scroll" data-animation="fadeInLeft">
-                            <i class="fas fa-envelope"></i> Email
-                        </a>
-                        <a href="https://wa.me/1234567890" target="_blank" class="btn btn-outline-success contact-btn animate-on-scroll" data-animation="fadeInUp">
-                            <i class="fab fa-whatsapp"></i> WhatsApp
-                        </a>
-                        <a href="tel:+1234567890" class="btn btn-outline-info contact-btn animate-on-scroll" data-animation="fadeInRight">
-                            <i class="fas fa-phone"></i> Call
-                        </a>
-                    </div>
+    
+<section id="contact" class="py-4" style="background-color: #1e1e1e; color: #ffffff;">
+    <div class="container">
+        <h2 class="section-title text-center mb-3 animate-on-scroll fadeInDown" style="color: #ffa500;">Get in Touch</h2>
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <div class="d-flex justify-content-around">
+                    <a href="mailto:contact@example.com" class="btn btn-success contact-btn animate-on-scroll fadeInLeft" style="background-color: #4CAF50; border: none;">
+                        <i class="fas fa-envelope"></i> Email
+                    </a>
+                    <a href="https://wa.me/1234567890" target="_blank" class="btn btn-success contact-btn animate-on-scroll fadeInUp" style="background-color: #4CAF50; border: none;">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                    <a href="tel:+1234567890" class="btn btn-success contact-btn animate-on-scroll fadeInRight" style="background-color: #4CAF50; border: none;">
+                        <i class="fas fa-phone"></i> Call
+                    </a>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-
-
-    <footer class="text-center py-4">
-        <div class="container">
-            <p>&copy; 2024 Natural Escape. All rights reserved.</p>
-            <div class="social-icons">
-                <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
-            </div>
+<footer class="text-center py-3" style="background-color: #1e1e1e; color: #ffffff;">
+    <div class="container">
+        <p>&copy; 2024 Adventure Awaits. All rights reserved.</p>
+        <div class="social-icons">
+            <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
         </div>
-    </footer>
+    </div>
+</footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

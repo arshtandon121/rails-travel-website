@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_08_24_054843) do
+ActiveRecord::Schema[7.0].define(version: 2024_08_31_054627) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -68,26 +68,22 @@ ActiveRecord::Schema[7.0].define(version: 2024_08_24_054843) do
   end
 
   create_table "camp_change_requests", force: :cascade do |t|
-    t.bigint "camp_id", null: false
     t.string "name"
-    t.decimal "price"
     t.integer "person"
     t.boolean "available"
-    t.string "category"
+    t.integer "category"
     t.text "details"
-    t.bigint "user_id", null: false
-    t.integer "status", default: 0
-    t.string "per_km"
-    t.string "camp_duration"
-    t.string "location"
-    t.string "rating"
-    t.string "feature"
-    t.string "double_price"
-    t.string "triple_price"
-    t.string "quad_price"
-    t.string "six_price"
+    t.text "camp_pic"
+    t.bigint "user_id"
+    t.bigint "camp_id", null: false
+    t.boolean "admin_approved"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
+    t.string "camp_duration"
+    t.string "location"
+    t.text "feature", default: [], array: true
+    t.decimal "rating", precision: 3, scale: 2, default: "0.0"
     t.index ["camp_id"], name: "index_camp_change_requests_on_camp_id"
     t.index ["user_id"], name: "index_camp_change_requests_on_user_id"
   end
@@ -119,7 +115,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_08_24_054843) do
 
   create_table "camps", force: :cascade do |t|
     t.string "name"
-    t.decimal "price", precision: 10, scale: 2
     t.integer "person"
     t.json "details"
     t.boolean "available"
@@ -129,6 +124,11 @@ ActiveRecord::Schema[7.0].define(version: 2024_08_24_054843) do
     t.integer "category"
     t.integer "user_id"
     t.boolean "authorized", default: false
+    t.text "description"
+    t.string "camp_duration"
+    t.string "location"
+    t.text "feature", default: [], array: true
+    t.decimal "rating", precision: 3, scale: 2, default: "0.0"
   end
 
   create_table "margins", force: :cascade do |t|

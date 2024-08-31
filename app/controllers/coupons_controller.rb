@@ -1,8 +1,12 @@
 class CouponsController < ApplicationController
   def user_coupons
     camp = Camp.find(params[:camp_id])
-    coupons = current_user.user_coupons.where(camp: camp, used: false)
-    render json: { coupons: coupons.map { |c| { code: c.code, discount: c.discount ,min_amount: c.min_price } } }
+    coupons = current_user&.user_coupons&.where(camp: camp, used: false)
+    unless coupons.present?
+      render json: { coupons: nil } 
+    else
+      render json: { coupons: coupons.map { |c| { code: c.code, discount: c.discount ,min_amount: c.min_price } } }
+    end
   end
 
   def generate
@@ -35,12 +39,14 @@ class CouponsController < ApplicationController
     total_price = params[:total_price].to_f
     coupon_code = params[:coupon_code]
     
+    puts"-------camp--#{camp.id}---------total_price--#{total_price}------#{coupon_code}" 
     user_coupon = current_user.user_coupons.find_by(code: coupon_code, camp: camp, used: false)
-    
+      
     if user_coupon  && total_price > user_coupon.min_price
       discount_amount = (user_coupon.discount).round(2)
       render json: { success: true, discount: discount_amount }
     else
+      puts"-----------------user_coupon  -#{user_coupon.id}---------#{user_coupon  && total_price > user_coupon.min_price }---#{current_user.id}"
       render json: { success: false, message: 'Invalid or already used coupon' }
     end
   end

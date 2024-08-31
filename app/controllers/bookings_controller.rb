@@ -37,7 +37,7 @@ class BookingsController < ApplicationController
     booking = Booking.new(
       camp: @camp,
       user: user,
-      camp_confirmation: nil,
+      camp_confirmation: false,
       payment_confirmation: false,
       name: params[:name],
       email: params[:email],
@@ -58,7 +58,7 @@ class BookingsController < ApplicationController
       
       # mark coupon as used 
       user_coupon = UserCoupon.find_by(code: params[:applied_coupon_id])
-      user_coupon.update(used: true)
+      user_coupon.update(used: true) if user_coupon.present?
 
       # Update the booking with the payment
       booking.update(payment: payment)

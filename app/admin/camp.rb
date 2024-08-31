@@ -1,16 +1,20 @@
 ActiveAdmin.register Camp do
-  permit_params :name, :price, :person, :available, :category, :details, :user_id, 
-                :per_km, :camp_duration, :location, :rating, :feature, 
-                :double_price, :triple_price, :quad_price, :six_price, :camp_pic
+  permit_params :name,  :person, :available, :category, :user_id,
+  :description, :camp_duration, :location, :feature, :camp_pic, :authorized, :rating
 
   filter :name
-  filter :price
   filter :category
   filter :user_id
   filter :person
   filter :available
   filter :authorized
   filter :rating
+
+  filter :description
+
+  filter :camp_duration
+  filter :location
+
 
   controller do
     before_action :authorize_user, only: [:show]
@@ -49,16 +53,17 @@ ActiveAdmin.register Camp do
     if current_user.admin?
       f.inputs "Camp Details" do
         f.input :name
-        f.input :price
         f.input :person
         f.input :available
+        f.inpur :rating
         f.input :category, as: :select, collection: Camp.categories.keys
         f.input :user_id, as: :select, collection: User.where(role: :camp_owner).pluck(:name, :id)
-        Camp::META.each do |meta_field|
-          f.input meta_field
-        end
-        f.input :details, as: :text
+        f.input :description
+        f.input :camp_duration
+        f.input :location
+        f.input :feature, as: :text
         f.input :camp_pic, as: :text
+        f.input :authorized
       end
       f.actions
     end
@@ -68,13 +73,15 @@ ActiveAdmin.register Camp do
     selectable_column
     id_column
     column :name
-    column :price
     column :person
     column :available
     column :category
-    Camp::META.each do |meta_field|
-      column meta_field
-    end
+    column :rating
+    column :user_id
+    column :description
+    column :camp_duration
+    column :location
+    column :authorized
     actions
   end
 
@@ -82,13 +89,17 @@ ActiveAdmin.register Camp do
     attributes_table do
       row :id
       row :name
-      row :price
       row :person
+      row :user_id
       row :available
+      row :rating
       row :category
-      Camp::META.each do |meta_field|
-        row meta_field
-      end
+      row :description
+      row :camp_duration
+      row :location
+      row :feature
+      row :camp_pic
+      row :authorized
     end
   end
 end

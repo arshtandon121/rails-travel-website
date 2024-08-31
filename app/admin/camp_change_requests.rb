@@ -1,138 +1,129 @@
-# app/admin/camp_change_requests.rb
 ActiveAdmin.register CampChangeRequest do
-    permit_params :camp_id, :name, :price, :person, :available, :category, :details, :user_id, :status, *Camp::META
-  
-    filter :camp
-    filter :user
-    filter :status
-    filter :created_at
-  
-    scope :all
-    scope :pending
-    scope :approved
-    scope :rejected
-  
-    controller do
-      before_action :authorize_camp_owner, only: [:new, :create, :destroy]
-      before_action :authorize_admin, only: [:edit, :update, :destroy]
-  
-      def authorize_camp_owner
-        unless current_user.camp_owner? || current_user.admin?
-          redirect_to admin_camp_change_requests_path, alert: "You are not authorized to perform this action."
-        end
+  permit_params :camp_id, :name, :person, :available, :category, :description, 
+                :camp_duration, :location, :feature, :camp_pic, :admin_approved, :user_id, :rating
+
+                config.batch_actions = true
+
+  filter :name
+  filter :category
+  filter :user_id
+  filter :camp_id
+  filter :admin_approved
+  filter :description
+  filter :camp_duration
+  filter :location
+  filter :rating
+
+  controller do
+    before_action :authorize_admin, only: [:edit, :update, :destroy, :approve_camps]
+
+    def authorize_admin
+      unless current_user.admin?
+        redirect_to admin_camp_change_requests_path, alert: "You are not authorized to perform this action."
       end
-  
-      def authorize_admin
-        unless current_user.admin?
-          redirect_to admin_camp_change_requests_path, alert: "You are not authorized to perform this action."
-        end
+    end
+
+    def scoped_collection
+      if current_user.admin?
+        super
+      else
+        super.where(user_id: current_user.id)
       end
+    end
+
+    def create
+      @camp_change_request = CampChangeRequest.new(camp_change_request_params)
+      @camp_change_request.user = current_user unless current_user.admin?
   
-      def scoped_collection
-        if current_user.admin?
-          super
-        else
-          super.where(user_id: current_user.id)
-        end
+      if @camp_change_request.save
+        redirect_to admin_camp_change_request_path(@camp_change_request), notice: 'Camp change request was successfully created.'
+      else
+        flash.now[:error] = @camp_change_request.errors.full_messages.join(", ")
+        render :new
       end
-  
-      def create
-        @camp_change_request = CampChangeRequest.new(permitted_params[:camp_change_request])
-        @camp_change_request.user = current_user
-        @camp_change_request.status = :pending
-  
-        if @camp_change_request.save
-          redirect_to admin_camp_change_request_path(@camp_change_request), notice: 'Change request submitted successfully.'
-        else
-          render :new
-        end
-      end
-  
-      def update
-        @camp_change_request = CampChangeRequest.find(params[:id])
-        if @camp_change_request.update(permitted_params[:camp_change_request])
-          if @camp_change_request.approved?
-            apply_changes_to_camp(@camp_change_request)
-            redirect_to admin_camp_change_request_path(@camp_change_request), notice: 'Change request approved and applied to camp.'
-          else
-            redirect_to admin_camp_change_request_path(@camp_change_request), notice: 'Change request updated successfully.'
-          end
-        else
-          render :edit
-        end
-      end
-  
-      private
-  
-      def apply_changes_to_camp(change_request)
-        camp = change_request.camp
-        camp.update(
-          name: change_request.name,
-          price: change_request.price,
-          person: change_request.person,
-          available: change_request.available,
-          category: change_request.category,
-          details: change_request.details
-        )
-  
-        Camp::META.each do |meta_field|
-          camp.send("#{meta_field}=", change_request.send(meta_field))
-        end
-  
-        camp.save
+    end
+
+    def update
+      @camp_change_request = CampChangeRequest.find(params[:id])
+
+      if @camp_change_request.update(camp_change_request_params)
+        redirect_to admin_camp_change_request_path(@camp_change_request), notice: 'Camp change request updated successfully.'
+      else
+        render :edit, alert: 'Failed to update camp change request.'
       end
     end
   
-    form do |f|
-      f.inputs "Camp Change Request" do
-        if current_user.camp_owner?
-          f.input :camp, collection: Camp.all.where(user_id: current_user.id)
-        else
-          f.input :camp
-        end
-        f.input :name
-        f.input :price
-        f.input :person
-        f.input :available
-        f.input :category, as: :select, collection: Camp.categories.keys
-        Camp::META.each do |meta_field|
-          f.input meta_field
-        end
-        f.input :details, as: :text
-        f.input :status, as: :select, collection: CampChangeRequest.statuses.keys, input_html: { disabled: !current_user.admin? }
-      end
-      f.actions
-    end
+    private
   
-    index do
-      selectable_column
-      id_column
-      column :camp
-      column :user
-      column :name
-      column :price
-      column :status
-      column :created_at
-      actions
-    end
-  
-    show do
-      attributes_table do
-        row :id
-        row :camp
-        row :user
-        row :name
-        row :price
-        row :person
-        row :available
-        row :category
-        Camp::META.each do |meta_field|
-          row meta_field
-        end
-        row :details
-        row :status
-        row :created_at
-        row :updated_at
-      end
+    def camp_change_request_params
+      params.require(:camp_change_request).permit(:camp_id, :name, :person, :available, :category, 
+                                                  :description, :camp_duration, :location, :feature, 
+                                                  :camp_pic, :admin_approved, :user_id, :rating)
     end
   end
+
+  form do |f|
+    f.semantic_errors *f.object.errors
+    f.inputs "Camp Change Request Details" do
+      f.input :camp_id, as: :select, collection: Camp.all.map { |c| [c.name, c.id] }
+      f.input :name
+      f.input :person
+      f.input :user_id, as: :select, collection: User.all.pluck(:name, :id), input_html: { disabled: true }
+      f.input :available
+      f.input :rating
+      f.input :category, as: :select, collection: CampChangeRequest.categories.keys
+      f.input :description
+      f.input :camp_duration
+      f.input :location
+      f.input :feature, as: :text
+      f.input :camp_pic, as: :text
+      f.input :admin_approved if current_user.admin?
+    end
+    f.actions
+  end
+
+  index do
+    selectable_column
+    id_column
+    column :camp
+    column :name
+    column :person
+    column :user_id
+    column :available
+    column :rating
+    column :category
+    column :description
+    column :camp_duration
+    column :location
+    column :admin_approved
+    actions
+  end
+
+  show do
+    attributes_table do
+      row :id
+      row :camp
+      row :name
+      row :person
+      row :available
+      row :category
+      row :rating
+      row :user_id
+      row :description
+      row :camp_duration
+      row :location
+      row :feature
+      row :camp_pic
+      row :admin_approved
+    end
+  end
+
+  # Batch action to approve selected CampChangeRequests
+  batch_action :approve_camps, form: {
+    admin_approved: ['Approve']
+  } do |ids, inputs|
+    CampChangeRequest.where(id: ids).update_all(admin_approved: true)
+    redirect_to collection_path, notice: "Selected camp change requests have been approved."
+  end
+
+end
