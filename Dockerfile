@@ -15,11 +15,12 @@ WORKDIR /rails
 ENV RAILS_LOG_TO_STDOUT="1" \
     RAILS_SERVE_STATIC_FILES="true" \
     RAILS_ENV="production" \
-    BUNDLE_WITHOUT="development"
+    BUNDLE_WITHOUT="development:test"
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
-RUN bundle install
+RUN bundle config set --local without 'development test' && \
+    bundle install --jobs 20 --retry 5
 
 # Copy application code
 COPY . .

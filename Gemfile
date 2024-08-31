@@ -22,6 +22,8 @@ gem 'twilio-ruby', '~> 5.60'
 gem 'pundit'
 
 
+gem 'mini_racer', platforms: :ruby
+
 gem 'activeadmin'
 
 gem 'sassc-rails'
@@ -90,5 +92,5 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
-  gem "webdrivers"
+  gem 'webdrivers', '= 5.3.0'
 end
