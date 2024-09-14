@@ -464,21 +464,27 @@
     </div>
     <div class="container mt-5">
       <div class="row">
+        <!-- Left Column: Camp Details -->
         <div class="col-md-8">
+          <!-- Camp Image Slider -->
           <div class="camp-image-slider mb-4">
             <% @camp.camp_pic.each do |pic| %>
               <img src="<%= pic %>" class="camp-image" alt="<%= @camp.name %>">
             <% end %>
           </div>
+          <!-- Camp Details -->
           <div class="camp-details purchase-box">
             <h1 class="mb-4"><%= @camp.name %></h1>
+            <!-- Camp Info -->
             <div class="camp-info mb-4">
               <span class="camp-duration"><i class="fas fa-clock"></i> <%= @camp.camp_duration %></span>
               <span class="camp-rating">
                 <%= "★" * @camp.rating.to_i %><%= "☆" * (5 - @camp.rating.to_i) %> <%= @camp.rating %>
               </span>
             </div>
+            <!-- Location -->
             <p><i class="fas fa-map-marker-alt"></i> <%= @camp.location %></p>
+            <!-- Dates -->
             <div class="dates mt-4">
               <div class="row">
                 <div class="col-md-12 mb-3 d-flex justify-content-between">
@@ -488,12 +494,12 @@
               </div>
               <div id="date-error" class="error-message" style="display: none;"></div>
             </div>
-
+            <!-- Sharing Options -->
             <% if @camp.sharing_fields %>
               <div id="sharing-options" class="d-none mt-4">
                 <h3 class="mt-4 mb-3">Sharing Options</h3>
                 <% ["Double", "Triple", "Quad", "Six"].each do |sharing| %>
-                  <div class="sharing-option mb-3" id="<%= sharing.downcase %>-sharing-info">
+                  <div class="sharing-option mb-3 d-none" id="<%= sharing.downcase %>-sharing-info">
                     <div class="d-flex justify-content-between align-items-center">
                       <span>
                         <%= sharing %> Sharing
@@ -510,25 +516,23 @@
                 <% end %>
               </div>
             <% end %>
-
-              <div id="total-price" class="mt-3 font-weight-bold"></div>
-
+            <!-- Price Info -->
+            <div id="total-price" class="mt-3 font-weight-bold"></div>
             <input type="hidden" id="camp-id" value="<%= @camp.id %>">
             <input type="hidden" id="check-in" value="<%= @check_in %>">
             <input type="hidden" id="check-out" value="<%= @check_out %>">
+            <!-- Camp Features -->
             <div class="camp-features mt-4">
               <h3>Included Features</h3>
               <% @camp.feature&.each do |feature| %>
                 <span class="feature-item"><i class="fas fa-check-circle"></i> <%= feature %></span>
               <% end %>
             </div>
-
-
+            <!-- Rafting Options -->
             <% if @camp.per_km_field %>
               <div id="rafting-options" class="d-none mt-4">
-                <div class="mt-4">
-                  <h3>Select Distance</h3>
-                  div class="btn-group" role="group" aria-label="Distance options">
+                <h3>Select Distance</h3>
+                <div class="btn-group" role="group" aria-label="Distance options">
                   <input type="radio" class="btn-check" name="distance" id="distance-11" value="11" checked>
                   <label class="btn btn-outline-primary" for="distance-11">11 km</label>
                   <input type="radio" class="btn-check" name="distance" id="distance-16" value="16">
@@ -538,7 +542,7 @@
                 </div>
               </div>
             <% end %>
-
+            <!-- Person Count Options -->
             <% if @camp.per_person_field %>
               <div id="person-count" class="d-none mt-4">
                 <h3>Number of Persons</h3>
@@ -549,72 +553,46 @@
                 </div>
               </div>
             <% end %>
-
-            <div id="adventure-price-info" class="d-none">
-
-              <% if @camp.per_person_field %>
-                <span id="adventure-price"></span>
-                <span id="adventure-per-person" class="per-person-price"></span>
-              <% elsif  @camp.sharing_fields %>
-                <div id="double-sharing-info">
-                  <span id="double-price"></span>
-                  <span id="double-per-person" class="per-person-price"></span>
-                </div>
-                <div id="triple-sharing-info">
-                  <span id="triple-price"></span>
-                  <span id="triple-per-person" class="per-person-price"></span>
-                </div>
-                <div id="quad-sharing-info">
-                  <span id="quad-price"></span>
-                  <span id="quad-per-person" class="per-person-price"></span>
-                </div>
-                <div id="six-sharing-info">
-                  <span id="six-price"></span>
-                  <span id="six-per-person" class="per-person-price"></span>
-                </div>
-              <% end %>
-              
-            </div>
           </div>
         </div>
+        <!-- Right Column: Booking Form -->
         <div class="col-md-4">
           <div class="lg-fixed">
-            <div class="mt-1">
-              <h2 class="mb-3">Book Your Adventure</h2>
-              <h3 id="display-price" class="text-primary mb-4">₹<%= 0 %></h3>
-              <button id="book-now-btn" class="btn btn-lg btn-purchase w-100 mb-3">Book Now</button>
-              <%= form_tag bookings_path, method: :post, id: 'payment-form', style: 'display: none;' do %>
-                <%= hidden_field_tag :camp_id, @camp.id %>
-                <%= hidden_field_tag :razorpay_payment_id %>
-                <%= hidden_field_tag :double_sharing %>
-                <%= hidden_field_tag :triple_sharing %>
-                <%= hidden_field_tag :master_total_price %>
-                <%= hidden_field_tag :quad_sharing %>
-                <%= hidden_field_tag :six_sharing %>
-                <%= hidden_field_tag :total_price %>
-                <%= hidden_field_tag :check_in_date %>
-                <%= hidden_field_tag :check_out_date %>
-                <%= hidden_field_tag :applied_coupon_id %>
-                <%= hidden_field_tag :hidden_number_of_persons, value: 1 %> <!-- Added hidden field -->
-                <div class="form-group mb-3">
-                  <%= label_tag :name, "Name" %>
-                  <%= text_field_tag :name, nil, class: 'form-control', required: true %>
-                </div>
-                <div class="form-group mb-3">
-                  <%= label_tag :email, "Email" %>
-                  <%= email_field_tag :email, nil, class: 'form-control', required: true %>
-                </div>
-                <div class="form-group mb-3">
-                  <%= label_tag :phone, "Phone" %>
-                  <%= telephone_field_tag :phone, nil, class: 'form-control', required: true %>
-                </div>
-                <% if ENV['RAZORPAY_KEY_ID'] %>
-                  <button id="razorpay-payment-button" class="btn btn-lg btn-success w-100">Proceed to Payment</button>
-                <% else %>
-                  <p class="text-danger">Razorpay credentials are not set up properly. Please contact the administrator.</p>
-                <% end %>
+            <h2 class="mb-3">Book Your Adventure</h2>
+            <h3 id="display-price" class="text-primary mb-4">₹<%= 0 %></h3>
+            <button id="book-now-btn" class="btn btn-lg btn-purchase w-100 mb-3">Book Now</button>
+            <%= form_tag bookings_path, method: :post, id: 'payment-form', style: 'display: none;' do %>
+              <%= hidden_field_tag :camp_id, @camp.id %>
+              <%= hidden_field_tag :razorpay_payment_id %>
+              <%= hidden_field_tag :double_sharing %>
+              <%= hidden_field_tag :triple_sharing %>
+              <%= hidden_field_tag :quad_sharing %>
+              <%= hidden_field_tag :six_sharing %>
+              <%= hidden_field_tag :total_price %>
+              <%= hidden_field_tag :check_in_date %>
+              <%= hidden_field_tag :check_out_date %>
+              <%= hidden_field_tag :applied_coupon_id %>
+              <%= hidden_field_tag :hidden_number_of_persons, value: 1 %>
+              <%= hidden_field_tag :selected_distance %>
+              <div class="form-group mb-3">
+                <%= label_tag :name, "Name" %>
+                <%= text_field_tag :name, nil, class: 'form-control', required: true %>
+              </div>
+              <div class="form-group mb-3">
+                <%= label_tag :email, "Email" %>
+                <%= email_field_tag :email, nil, class: 'form-control', required: true %>
+              </div>
+              <div class="form-group mb-3">
+                <%= label_tag :phone, "Phone" %>
+                <%= telephone_field_tag :phone, nil, class: 'form-control', required: true %>
+              </div>
+              <% if ENV['RAZORPAY_KEY_ID'] %>
+                <button id="razorpay-payment-button" class="btn btn-lg btn-success w-100">Proceed to Payment</button>
+              <% else %>
+                <p class="text-danger">Razorpay credentials are not set up properly. Please contact the administrator.</p>
               <% end %>
-            </div>
+            <% end %>
+            <!-- Coupons Section -->
             <div id="coupon-section" class="coupon-section d-none mt-4">
               <h4>Coupons</h4>
               <div id="generate-coupon-section">
@@ -629,21 +607,9 @@
               <div id="manual-coupon-input" class="mt-3">
                 <input type="text" id="manual-coupon-code" class="coupon-input" placeholder="Enter coupon code">
                 <button id="apply-manual-coupon-btn" class="coupon-btn">Apply Coupon</button>
-              </div>
-              <div id="coupon-info" class="coupon-info">
-                <p>Applied Coupon: <span id="applied-coupon">None</span></p>
-                <p>Discount: <span id="coupon-discount">₹0.00</span></p>
+                <div id="manual-coupon-loader" class="loader" style="display: none;"></div>
               </div>
             </div>
-          </div>
-          <div class="celebration-overlay" id="celebrationOverlay">
-            <div class="celebration-content">
-              <h2>Woohoo! Discount Applied!</h2>
-              <p>You just saved some money! 🎉💰</p>
-            </div>
-          </div>
-          <div class="fullscreen-loader" style="display: none;">
-            <div class="loader"></div>
           </div>
         </div>
       </div>
@@ -661,456 +627,523 @@
     <script>
       // Camp details and pricing
 
+      // Camp details and pricing
       var campDetails = <%= @camp.details.to_json.html_safe %>;
+      var campPrice = <%= @camp.camp_price.to_json.html_safe%>
+      campDetails.sharing_fields = <%= @camp.sharing_fields.to_json.html_safe %>;
 
-         function showLoader() {
-      document.getElementById('loader').style.display = 'flex';
+
+      campDetails.per_person_field = <%= @camp.per_person_field.to_json.html_safe %>;
+      campDetails.per_km_field = <%= @camp.per_km_field.to_json.html_safe %>;
+
+       campDetails.sharing_fields_data = [];
+
+      // Sharing options array and corresponding flags in campPrice
+      const sharingOptions = [
+          { name: 'double', enabled: campPrice.double_sharing_enabled },
+          { name: 'triple', enabled: campPrice.triple_sharing_enabled },
+          { name: 'quad', enabled: campPrice.quad_sharing_enabled },
+          { name: 'six', enabled: campPrice.six_sharing_enabled }
+      ];
+
+      // Iterate over sharingOptions and push enabled options into sharing_fields_data
+      sharingOptions.forEach(function(option) {
+          if (option.enabled) {
+          campDetails.sharing_fields_data.push(option.name);
+          }
+      });
+      console.log("campDetails",campDetails)
+
+
+      function showLoader() {
+        document.getElementById('loader').style.display = 'flex';
       }
 
       function hideLoader() {
-      document.getElementById('loader').style.display = 'none';
+        document.getElementById('loader').style.display = 'none';
       }
 
       // Utility functions
       function showNotification(message, type = 'error') {
-          const backgroundColor = '#1e1e1e';
-          const textColor = '#e0e0e0';
-          let iconColor;
+        const backgroundColor = '#1e1e1e';
+        const textColor = '#e0e0e0';
+        let iconColor;
 
-          switch(type) {
-              case 'success':
-                  iconColor = '#4CAF50'; // Green
-                  break;
-              case 'error':
-                  iconColor = 'red'; // Red
-                  break;
-              default:
-                  iconColor = '#FFA500'; // Default to orange
-          }
+        switch(type) {
+          case 'success':
+      iconColor = '#4CAF50'; // Green
+      break;
+          case 'error':
+      iconColor = 'red'; // Red
+      break;
+          default:
+      iconColor = '#FFA500'; // Default to orange
+        }
 
-          Swal.fire({
-              icon: type,
-              title: type.charAt(0).toUpperCase() + type.slice(1),
-              text: message,
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              showCloseButton: true,
-              timer: 3000,
-              timerProgressBar: true,
-              customClass: {
-                  popup: 'small-notification'
-              },
-              background: backgroundColor,
-              color: textColor,
-              iconColor: iconColor,
-          });
+        Swal.fire({
+          icon: type,
+          title: type.charAt(0).toUpperCase() + type.slice(1),
+          text: message,
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          showCloseButton: true,
+          timer: 3000,
+          timerProgressBar: true,
+          customClass: {
+      popup: 'small-notification'
+          },
+          background: backgroundColor,
+          color: textColor,
+          iconColor: iconColor,
+        });
       }
 
       let dayPrices = {};
       // Store per-person prices for each sharing option
       const perPersonPrices = {
-          double: 0, // Set the actual per-person price for double sharing
-          triple: 0, // Set the actual per-person price for triple sharing
-          quad: 0,   // Set the actual per-person price for quad sharing
-          six: 0     // Set the actual per-person price for six sharing
+        double: 0,
+        triple: 0,
+        quad: 0,
+        six: 0,
+        person: 0,
+        km: 0
       };
 
       let appliedCouponDiscount = 0;
 
-         $(document).ready(function() {
-          // Initialize Flatpickr for date range selection
-          flatpickr("#date-range", {
-              mode: "range",
-              minDate: "today", // Disable past dates
-              dateFormat: "Y-m-d",
-              onChange: function(selectedDates, dateStr, instance) {
-                  if (selectedDates.length === 2) {
-                      const [checkIn, checkOut] = selectedDates;
 
-                      // If check-in and check-out dates are the same, clear the selection
-                      if (checkIn.getTime() === checkOut.getTime()) {
-                          instance.clear();
-                          showNotification("Check-in and check-out dates cannot be the same. Please select different dates.", 'error');
-                      } else {
-                          // Format dates as YYYY-MM-DD
-                          const formatDate = (date) => {
-                              const year = date.getFullYear();
-                              const month = ('0' + (date.getMonth() + 1)).slice(-2);
-                              const day = ('0' + date.getDate()).slice(-2);
-                              return `${year}-${month}-${day}`;
-                          };
+      function isPriceValid() {
+           const displayPrice = $('#display-price');
+          const price = parseFloat(displayPrice.text().replace('₹', '').trim());
+          return price > 0;
+        }
 
-                          const formattedCheckIn = formatDate(checkIn);
-                          const formattedCheckOut = formatDate(checkOut);
 
-                          makeAjaxCall(formattedCheckIn, formattedCheckOut);
-                          showLoader();
-                          // Display the selected date range in the input field
-                          $('#date-range').val(`${formattedCheckIn} - ${formattedCheckOut}`);
-                      }
-                  }
-              },
-              locale: {
-                  rangeSeparator: " to ", // Customize separator between dates
-                  firstDayOfWeek: 1, // Set Monday as the first day of the week
-              }
-          });
+      $(document).ready(function() {
+        // Initialize Flatpickr for date range selection
+        flatpickr("#date-range", {
+          mode: "range",
+          minDate: "today",
+          dateFormat: "Y-m-d",
+          onChange: function(selectedDates, dateStr, instance) {
+      if (selectedDates.length === 2) {
+        const [checkIn, checkOut] = selectedDates;
 
-          // Usage example:
-          function makeAjaxCall(checkIn, checkOut) {
+        if (checkIn.getTime() === checkOut.getTime()) {
+          instance.clear();
+          showNotification("Check-in and check-out dates cannot be the same. Please select different dates.", 'error');
+        } else {
+          const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = ('0' + (date.getMonth() + 1)).slice(-2);
+            const day = ('0' + date.getDate()).slice(-2);
+            return `${year}-${month}-${day}`;
+          };
 
-              $.ajax({
-                  url: '/get_day_prices',
-                  method: 'GET',
-                  data: {
-                      camp_id: '<%= @camp.id %>',
-                      check_in: checkIn,
-                      check_out: checkOut
-                  },
-                  success: function(response) {
-                      console.log('Dates submitted successfully:', response);
-                      dayPrices = response.day_prices;
+          const formattedCheckIn = formatDate(checkIn);
+          const formattedCheckOut = formatDate(checkOut);
 
-                      updateSharingPrices(response);
-                      // Show the relevant sections
-                      hideLoader()
-                       document.getElementById('check_in_date').value = checkIn;
-                        document.getElementById('check_out_date').value = checkOut;
-                  },
-                  error: function(error) {
-                      console.error('Error submitting dates:', error);
-                      hideLoader()
-                  }
-              });
+          makeAjaxCall(formattedCheckIn, formattedCheckOut);
+          showLoader();
+          $('#date-range').val(`${formattedCheckIn} - ${formattedCheckOut}`);
+        }
+      }
+          },
+          locale: {
+      rangeSeparator: " to ",
+      firstDayOfWeek: 1,
           }
+        });
 
-
-          function updateSharingPrices(response) {
-              const averagePrices = response.average_per_person_prices;
-              const totalDays = response.total_days;
-
-              const sharingOptions = ['double', 'triple', 'quad', 'six'];
-
-              sharingOptions.forEach(sharing => {
-                  const averagePrice = parseFloat(averagePrices[sharing]);
-
-                  perPersonPrices[sharing] = averagePrice;
-
-                  const quantity = parseInt(document.getElementById(`${sharing}-sharing`).value, 10) || 0;
-
-                  $(`#${sharing}-per-person`).text('(₹' + averagePrice.toFixed(2) + ' per person)');
-                  $(`#${sharing}-per-person`).show();
-
-
-              });
-
-
-              // Show the relevant sections
-              $('#sharing-options, #coupon-section,  #calculate-price, #rafting-options, #person-count, #adventure-price-info').removeClass('d-none');
-
-          }
-
-              // Clear input on cancel
-              $('#date-range-clear').on('click', function() {
-                  flatpickr("#date-range").clear(); // Clear the Flatpickr input
-                  $('#date-range').val(''); // Clear the visible input field
-                  $('#date-error').hide(); // Hide any error messages
-              });
-      });
-
-
-
-
-
-          function changeQuantity(sharingType, change) {
-              const input = document.getElementById(`${sharingType}-sharing`);
-              let newValue = parseInt(input.value) + change;
-              newValue = Math.max(newValue, 0); // Ensure the value doesn't go below 0
-              input.value = newValue;
-              updatePrices();
-          }
-
-          function updatePrices() {
-              let totalPrice = 0;
-              let totalPersons = 0;
-
-              ['double', 'triple', 'quad', 'six'].forEach(sharingType => {
-                  const quantity = parseInt(document.getElementById(`${sharingType}-sharing`).value);
-                  const perPersonPrice = perPersonPrices[sharingType];
-                  const sharingPrice = quantity * perPersonPrice * (sharingType === 'double' ? 2 :
-                                                                  sharingType === 'triple' ? 3 :
-                                                                  sharingType === 'quad' ? 4 : 6);
-
-                  totalPrice += sharingPrice;
-                  totalPersons += quantity * (sharingType === 'double' ? 2 :
-                                              sharingType === 'triple' ? 3 :
-                                              sharingType === 'quad' ? 4 : 6);
-
-                  // Update individual sharing option prices
-                  document.getElementById(`${sharingType}-price`).textContent = `₹${sharingPrice.toFixed(2)}`;
-
-
-                  // Update hidden fields
-                  document.getElementById(`${sharingType}_sharing`).value = quantity;
-              });
-
-              // Update total price display
-              document.getElementById('display-price').textContent = `₹${totalPrice.toFixed(2)}`;
-
-              // Update hidden total price and number of persons fields
-              document.getElementById('total_price').value = totalPrice;
-              document.getElementById('hidden_number_of_persons').value = totalPersons;
-          }
-
-        
-
-          // Add event listeners to quantity inputs
+        // Add event listeners to quantity inputs
+        if (campDetails.sharing_fields) {
           ['double', 'triple', 'quad', 'six'].forEach(sharingType => {
               document.getElementById(`${sharingType}-sharing`).addEventListener('input', updatePrices);
           });
+        }
+
+        const bookNowBtn = $('#book-now-btn');
+        const paymentForm = $('#payment-form');
+        const razorpayBtn = $('#razorpay-payment-button');
+        const displayPrice = $('#display-price');
 
 
 
+        function updateButtonState() {
+          bookNowBtn.prop('disabled', !isPriceValid());
+        }
+
+        updateButtonState();
+
+        displayPrice.on('DOMSubtreeModified', updateButtonState);
+
+        bookNowBtn.on('click', function() {
+          if (isPriceValid()) {
+      paymentForm.show();
+      bookNowBtn.hide();
+          }
+        });
+      });
+
+      function makeAjaxCall(checkIn, checkOut) {
+        $.ajax({
+          url: '/get_day_prices',
+          method: 'GET',
+          data: {
+            camp_id: '<%= @camp.id %>',
+            check_in: checkIn,
+            check_out: checkOut
+          },
+          success: function(response) {
+          console.log('Dates submitted successfully:', response);
+          dayPrices = response.day_prices;
+
+          updateSharingPrices(response);
+          hideLoader();
+          document.getElementById('check_in_date').value = checkIn;
+          document.getElementById('check_out_date').value = checkOut;
+          },
+          error: function(error) {
+            console.error('Error submitting dates:', error);
+            hideLoader();
+          }
+        });
+      }
+
+     function updateSharingPrices(response) {
+      const averagePrices = response.average_per_person_prices;
+      const totalDays = response.total_days;
+      const dayPrices = response.day_prices;
+
+      const sharingOptions = ['double', 'triple', 'quad', 'six'];
+
+      sharingOptions.forEach(sharing => {
+        if (campDetails.sharing_fields && campDetails.sharing_fields_data.includes(sharing)) {
+          const averagePrice = parseFloat(averagePrices[sharing]);
+          perPersonPrices[sharing] = averagePrice;
+          const quantity = parseInt(document.getElementById(`${sharing}-sharing`).value, 10) || 0;
+          $(`#${sharing}-per-person`).text('(₹' + averagePrice.toFixed(2) + ' per person)');
+          $(`#${sharing}-per-person`).show();
+          $(`#${sharing}-sharing-info`).removeClass('d-none');
+        }
+      });
+
+      if (campDetails.per_person_field) {
+        $('#person-count').removeClass('d-none');
+      }
+
+       if (campDetails.per_km_field) {
+        perPersonPrices.km = parseFloat(averagePrices);
+        $('#per-km-price').text('(₹' + perPersonPrices.km.toFixed(2) + ' per km)');
+        $('#rafting-options').removeClass('d-none');
+        
+        // Update price based on selected distance
+        const selectedDistance = $('input[name="distance"]:checked').val();
+        const totalKmPrice = perPersonPrices.km * selectedDistance;
+        $('#total-km-price').text('Total: ₹' + totalKmPrice.toFixed(2));
+      }
+
+     
+
+      if (campDetails.sharing_fields) $('#sharing-options').removeClass('d-none');
+      $('#coupon-section, #calculate-price, #adventure-price-info').removeClass('d-none');
+
+      updatePrices();
+    }
 
 
 
+      $('#date-range-clear').on('click', function() {
+        flatpickr("#date-range").clear();
+        $('#date-range').val('');
+        $('#date-error').hide();
+      });
 
+      function changeQuantity(sharingType, change) {
+        const input = document.getElementById(`${sharingType}-sharing`);
+        let newValue = parseInt(input.value) + change;
+        newValue = Math.max(newValue, 0);
+        input.value = newValue;
+        updatePrices();
+      }
 
+      function updateButtonState() {
+        const bookNowBtn = $('#book-now-btn');
+        bookNowBtn.prop('disabled', !isPriceValid());
+      }
 
+      function updatePrices() {
+        let totalPrice = 0;
+        let totalPersons = 0;
 
+        if (campDetails.sharing_fields) {
+          ['double', 'triple', 'quad', 'six'].forEach(sharingType => {
+              if (campDetails.sharing_fields_data.includes(sharingType)) {
+              const quantity = parseInt(document.getElementById(`${sharingType}-sharing`).value);
+              const perPersonPrice = perPersonPrices[sharingType];
+              const sharingMultiplier = sharingType === 'double' ? 2 :
+                                          sharingType === 'triple' ? 3 :
+                                          sharingType === 'quad' ? 4 : 6;
+              const sharingPrice = quantity * perPersonPrice * sharingMultiplier;
 
+              totalPrice += sharingPrice;
+              totalPersons += quantity * sharingMultiplier;
 
-
-
-
-      //  COUPONS CODE HERE
-
-
-      function fetchUserCoupons() {
-          showLoader()
-          totalPrice =  document.getElementById('total_price').value
-          let campId = '<%= @camp.id %>';
-          $.ajax({
-              url: '/user_coupons',
-              method: 'GET',
-              data: {
-                  camp_id: campId,
-                  total_price: totalPrice
-              },
-              headers: {
-                  'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-              },
-              success: function(response) {
-                  console.log('Fetched user coupons:', response);
-                  if (response.coupons && response.coupons.length > 0) {
-                      $('#generate-coupon-section').hide();
-                      $('#apply-coupon-section').show();
-                      populateUserCoupons(response.coupons, totalPrice);
-                  } else {
-                      $('#generate-coupon-section').show();
-                      $('#apply-coupon-section').hide();
-                  }
-                  $('.coupon-section').show();
-                  checkCouponVisibility();
-                  hideLoader()
-              },
-              error: function(xhr, status, error) {
-                  console.error('Error fetching coupons:', error);
-                  showNotification('Error fetching coupons. Please try again.', 'error');
-                  hideLoader()
+              document.getElementById(`${sharingType}-price`).textContent = `₹${sharingPrice.toFixed(2)}`;
+              document.getElementById(`${sharingType}_sharing`).value = quantity;
               }
           });
+        }
+
+        if (campDetails.per_person_field && campDetails.per_km_field ) {
+          const personCount = parseInt($('#number_of_persons').val());
+
+          const selectedDistance = parseInt($('input[name="distance"]:checked').val());
+          const perKmPrice = perPersonPrices.km;
+          totalPrice += selectedDistance * perKmPrice * personCount;
+           $('#selected_distance').val(selectedDistance)
+        }else{
+
+          if (campDetails.per_person_field) {
+            const personCount = parseInt($('#number_of_persons').val());
+            const perPersonPrice = perPersonPrices.person;
+            totalPrice += personCount * perPersonPrice;
+            totalPersons += personCount;
+          }
+  
+          if (campDetails.per_km_field ) {
+            const selectedDistance = parseInt($('input[name="distance"]:checked').val());
+            const perKmPrice = perPersonPrices.km;
+            totalPrice += selectedDistance * perKmPrice ;
+          }
+            $('#selected_distance').val(selectedDistance)
+        }
+
+        const personInput = document.getElementById('number_of_persons').val();
+        $('#display-price').text(`₹${totalPrice.toFixed(2)}`);
+        $('#total_price').val(totalPrice);
+        $('#hidden_number_of_persons').val(personInput);
+       
+
+        updateButtonState();
+      }
+
+      // Coupon related functions
+      function fetchUserCoupons() {
+        showLoader();
+        let totalPrice = document.getElementById('total_price').value;
+        let campId = '<%= @camp.id %>';
+        $.ajax({
+          url: '/user_coupons',
+          method: 'GET',
+          data: {
+      camp_id: campId,
+      total_price: totalPrice
+          },
+          headers: {
+      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+          },
+          success: function(response) {
+      console.log('Fetched user coupons:', response);
+      if (response.coupons && response.coupons.length > 0) {
+        $('#generate-coupon-section').hide();
+        $('#apply-coupon-section').show();
+        populateUserCoupons(response.coupons, totalPrice);
+      } else {
+        $('#generate-coupon-section').show();
+        $('#apply-coupon-section').hide();
+      }
+      $('.coupon-section').show();
+      checkCouponVisibility();
+      hideLoader();
+          },
+          error: function(xhr, status, error) {
+      console.error('Error fetching coupons:', error);
+      showNotification('Error fetching coupons. Please try again.', 'error');
+      hideLoader();
+          }
+        });
       }
 
       function populateUserCoupons(coupons, totalPrice) {
-          let $couponDiv = $('#user-coupons-div');
-          $couponDiv.empty();
-          console.log('Populating coupons:', coupons);
-          console.log('Total price:', totalPrice);
+        let $couponDiv = $('#user-coupons-div');
+        $couponDiv.empty();
+        console.log('Populating coupons:', coupons);
+        console.log('Total price:', totalPrice);
 
-          coupons.forEach(function(coupon) {
-              let isEligible = +totalPrice >= coupon.min_amount;
-              let eligibilityHtml = isEligible
-                  ? '<span class="eligibility eligible"><i class="fas fa-check-circle"></i> Eligible</span>'
-                  : `<span class="eligibility not-eligible">Add ₹${(coupon.min_amount - totalPrice).toFixed(2)} more to apply</span>`;
+        coupons.forEach(function(coupon) {
+          let isEligible = +totalPrice >= coupon.min_amount;
+          let eligibilityHtml = isEligible
+      ? '<span class="eligibility eligible"><i class="fas fa-check-circle"></i> Eligible</span>'
+      : `<span class="eligibility not-eligible">Add ₹${(coupon.min_amount - totalPrice).toFixed(2)} more to apply</span>`;
 
-              let couponHtml = `
-                  <div class="coupon-item ${isEligible ? 'eligible' : 'not-eligible'}" data-coupon-code="${coupon.code}">
-                      <input type="radio" name="coupon" value="${coupon.code}" id="coupon-${coupon.id}" ${isEligible ? '' : 'disabled'}>
-                      <label for="coupon-${coupon.id}">
-                          <div class="coupon-code">
-                              ${coupon.code}
-                              <button class="copy-btn" data-code="${coupon.code}" title="Copy Coupon Code">
-                                  <i class="fas fa-copy"></i>
-                              </button>
-                          </div>
-                          <div class="coupon-details">
-                              ₹${coupon.discount} off (Min. ₹${coupon.min_amount})
-                              <br>You save: ₹${coupon.discount}
-                          </div>
-                          ${eligibilityHtml}
-                      </label>
-                  </div>
-              `;
-              $couponDiv.append(couponHtml);
+          let couponHtml = `
+      <div class="coupon-item ${isEligible ? 'eligible' : 'not-eligible'}" data-coupon-code="${coupon.code}">
+        <input type="radio" name="coupon" value="${coupon.code}" id="coupon-${coupon.id}" ${isEligible ? '' : 'disabled'}>
+        <label for="coupon-${coupon.id}">
+          <div class="coupon-code">
+            ${coupon.code}
+            <button class="copy-btn" data-code="${coupon.code}" title="Copy Coupon Code">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+          <div class="coupon-details">
+            ₹${coupon.discount} off (Min. ₹${coupon.min_amount})
+            <br>You save: ₹${coupon.discount}
+          </div>
+          ${eligibilityHtml}
+        </label>
+      </div>
+          `;
+          $couponDiv.append(couponHtml);
+        });
+
+        $couponDiv.on('click', '.copy-btn', function(e) {
+          e.preventDefault();
+          let couponCode = $(this).data('code');
+          navigator.clipboard.writeText(couponCode).then(function() {
+      showNotification(`Coupon code ${couponCode} copied to clipboard!`, 'success');
+          }).catch(function(error) {
+      showNotification('Failed to copy coupon code:', 'error');
           });
+        });
 
-          // Add event listener for copy buttons
-          $couponDiv.on('click', '.copy-btn', function(e) {
-              e.preventDefault(); // Prevent the radio button from being checked
-              let couponCode = $(this).data('code');
-              navigator.clipboard.writeText(couponCode).then(function() {
-                  showNotification(`Coupon code ${couponCode} copied to clipboard!`, 'success');
-              }).catch(function(error) {
-                  showNotification('Failed to copy coupon code:', 'error');
-              });
-          });
+        $couponDiv.on('change', 'input[name="coupon"]', function() {
+          $('.coupon-item').removeClass('active');
+          $(this).closest('.coupon-item').addClass('active');
+        });
 
-          // Add event listener for coupon selection
-          $couponDiv.on('change', 'input[name="coupon"]', function() {
-              // Remove active class from all coupon items
-              $('.coupon-item').removeClass('active');
-              // Add active class to the selected coupon item
-              $(this).closest('.coupon-item').addClass('active');
-          });
-
-          console.log('Coupon div content:', $couponDiv.html());
+        console.log('Coupon div content:', $couponDiv.html());
       }
-
-
-
 
       function checkCouponVisibility() {
-          console.log('Coupon section visibility:', $('.coupon-section').is(':visible'));
-          console.log('Generate coupon section visibility:', $('#generate-coupon-section').is(':visible'));
-          console.log('Apply coupon section visibility:', $('#apply-coupon-section').is(':visible'));
-          console.log('User coupons div content:', $('#user-coupons-div').html());
+        console.log('Coupon section visibility:', $('.coupon-section').is(':visible'));
+        console.log('Generate coupon section visibility:', $('#generate-coupon-section').is(':visible'));
+        console.log('Apply coupon section visibility:', $('#apply-coupon-section').is(':visible'));
+        console.log('User coupons div content:', $('#user-coupons-div').html());
       }
 
-
-
       function showCouponModal(coupons) {
-          let $couponList = $('#coupon-list');
-          $couponList.empty();
-          coupons.forEach(function(coupon) {
-              let couponHtml = `
-                  <div class="coupon-item">
-                      <span class="coupon-code">${coupon.code}</span> - ₹${coupon.discount} off (Min. ₹${coupon.min_amount})
-                  </div>
-              `;
-              $couponList.append(couponHtml);
-          });
-          $('.coupon-modal').show();
+        let $couponList = $('#coupon-list');
+        $couponList.empty();
+        coupons.forEach(function(coupon) {
+          let couponHtml = `
+      <div class="coupon-item">
+        <span class="coupon-code">${coupon.code}</span> - ₹${coupon.discount} off (Min. ₹${coupon.min_amount})
+      </div>
+          `;
+          $couponList.append(couponHtml);
+        });
+        $('.coupon-modal').show();
       }
 
       function generateCoupon() {
-          let campId = '<%= @camp.id %>';
+        let campId = '<%= @camp.id %>';
 
-          showLoader();
+        showLoader();
 
-          $.ajax({
-              url: '/generate_coupon',
-              method: 'POST',
-              data: { camp_id: campId },
-              headers: {
-                  'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-              },
-              success: function(response) {
-                  hideLoader();
-                  if (response.coupons && response.coupons.length > 0) {
-                      showCouponModal(response.coupons);
-                  } else if (response.coupon) {
-                      showNotification('Coupon generated successfully!', 'success');
-                      fetchUserCoupons();
-                  } else {
-                      showNotification(response.message || 'Failed to generate coupon.', 'error');
-                  }
-              },
-              error: function(xhr) {
-                  hideLoader();
-                  // Check if responseJSON and message exist
-                  if (xhr.status == 401 && xhr.responseJSON && xhr.responseJSON.message) {
-                      console.log(xhr.responseJSON.message);
-                      showNotification(xhr.responseJSON.message, 'error'); // Display the error message from the response
-                  } else {
-                      console.log('No Coupons are Available right now.');
-                      showNotification('No Coupons are Available right now.', 'error'); // Default error message for other statuses
-                  }
-              }
-          });
+        $.ajax({
+          url: '/generate_coupon',
+          method: 'POST',
+          data: { camp_id: campId },
+          headers: {
+      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+          },
+          success: function(response) {
+      hideLoader();
+      if (response.coupons && response.coupons.length > 0) {
+        showCouponModal(response.coupons);
+      } else if (response.coupon) {
+        showNotification('Coupon generated successfully!', 'success');
+        fetchUserCoupons();
+      } else {
+        showNotification(response.message || 'Failed to generate coupon.', 'error');
+      }
+          },
+          error: function(xhr) {
+      hideLoader();
+      if (xhr.status == 401 && xhr.responseJSON && xhr.responseJSON.message) {
+        console.log(xhr.responseJSON.message);
+        showNotification(xhr.responseJSON.message, 'error');
+      } else {
+        console.log('No Coupons are Available right now.');
+        showNotification('No Coupons are Available right now.', 'error');
+      }
+          }
+        });
       }
 
       function getSelectedCoupon() {
           const selectedCoupon = $('input[name="coupon"]:checked').val();
           return selectedCoupon;
-      }
+        }
 
 
 
         function applyCoupon(isManual) {
-      let couponCode;
-      if (isManual) {
-          couponCode = $('#manual-coupon-code').val().trim();
-      } else {
-          couponCode = $('input[name="coupon"]:checked').val();
-      }
-      let campId = '<%= @camp.id %>';
-      let totalPrice = $('#total_price').val();
-      console.log("Total price:", totalPrice);
+            let couponCode;
+            if (isManual) {
+                couponCode = $('#manual-coupon-code').val().trim();
+            } else {
+                couponCode = $('input[name="coupon"]:checked').val();
+            }
+            let campId = '<%= @camp.id %>';
+            let totalPrice = $('#total_price').val();
+            console.log("Total price:", totalPrice);
 
-      if (!couponCode) {
-          showNotification('Please select or enter a coupon code.', 'error');
-          return;
-      }
+            if (!couponCode) {
+                showNotification('Please select or enter a coupon code.', 'error');
+                return;
+            }
 
-      $.ajax({
-          url: '/apply_coupon',
-          method: 'POST',
-          data: {
-              coupon_code: couponCode,
-              camp_id: campId,
-              total_price: totalPrice
-          },
-          headers: {
-              'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-          },
-          success: function(response) {
-              if (response.success) {
-                  var discount = parseFloat(response.discount);
-                  $('#applied-coupon').text(couponCode);
-                  $('#coupon-discount').text('₹' + discount.toFixed(2));
-                  $('#applied_coupon_id').val(couponCode);
-                  $('#coupon-info').show();
-                   $('#manual-coupon-input').hide();
-                  showNotification('Coupon applied successfully!', 'success');
+            $.ajax({
+                url: '/apply_coupon',
+                method: 'POST',
+                data: {
+                    coupon_code: couponCode,
+                    camp_id: campId,
+                    total_price: totalPrice
+                },
+                headers: {
+                    'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var discount = parseFloat(response.discount);
+                        $('#applied-coupon').text(couponCode);
+                        $('#coupon-discount').text('₹' + discount.toFixed(2));
+                        $('#applied_coupon_id').val(couponCode);
+                        $('#coupon-info').show();
+                        $('#manual-coupon-input').hide();
+                        showNotification('Coupon applied successfully!', 'success');
 
-                  $('#apply-coupon-section').hide();
-                  $('#manual-coupon-code').val('');
+                        $('#apply-coupon-section').hide();
+                        $('#manual-coupon-code').val('');
 
-                  showCelebration();
-                  $('#coupon-info').append('<button id="remove-discount-btn" class="btn btn-sm btn-danger mt-2">Remove Discount</button>');
-                  setTimeout(function() {
-                      $('#coupon-info').removeClass('joy-animation');
-                  }, 500);
+                        showCelebration();
+                        $('#coupon-info').append('<button id="remove-discount-btn" class="btn btn-sm btn-danger mt-2">Remove Discount</button>');
+                        setTimeout(function() {
+                            $('#coupon-info').removeClass('joy-animation');
+                        }, 500);
 
-                  // Update the total price display
-                  $('#master_total_price').val(totalPrice);
-                  let newTotalPrice = totalPrice - discount;
-                  $('#display-price').text('₹' + newTotalPrice.toFixed(2));
-                  $('#total_price').val(newTotalPrice);
-              } else {
-                  showNotification(response.message, 'error');
-              }
-          },
-          error: function() {
-              showNotification('Error applying coupon. Please try again.', 'error');
-          }
-      });
-      }
+                        // Update the total price display
+                        $('#master_total_price').val(totalPrice);
+                        let newTotalPrice = totalPrice - discount;
+                        $('#display-price').text('₹' + newTotalPrice.toFixed(2));
+                        $('#total_price').val(newTotalPrice);
+                    } else {
+                        showNotification(response.message, 'error');
+                    }
+                },
+                error: function() {
+                    showNotification('Error applying coupon. Please try again.', 'error');
+                }
+            });
+        }
 
 
-      function showCelebration() {
+        function showCelebration() {
           const overlay = document.getElementById('celebrationOverlay');
           overlay.style.opacity = '1';
           overlay.style.pointerEvents = 'auto';
@@ -1124,9 +1157,9 @@
               overlay.style.opacity = '0';
               overlay.style.pointerEvents = 'none';
           }, 3000);
-      }
+        }
 
-      function createConfetti() {
+        function createConfetti() {
           const confetti = document.createElement('div');
           confetti.className = 'confetti';
           confetti.style.left = Math.random() * 100 + 'vw';
@@ -1140,84 +1173,80 @@
           setTimeout(() => {
               confetti.remove();
           }, 5000);
-      }
+        }
 
-      function removeConfetti() {
+        function removeConfetti() {
           document.querySelectorAll('.confetti').forEach(c => c.remove());
-      }
+        }
 
-      function getRandomColor() {
-      const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-      return colors[Math.floor(Math.random() * colors.length)];
-      }
+        function getRandomColor() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
 
 
          function removeDiscount() {
-      $('#applied-coupon').text('None');
-      $('#coupon-discount').text('₹0.00');
-      $('#applied_coupon_id').val('');
-      $('#coupon-info').hide();
-      $('#apply-coupon-section').show();
-      $('#manual-coupon-input').show();
-      $('#remove-discount-btn').remove();
+            $('#applied-coupon').text('None');
+            $('#coupon-discount').text('₹0.00');
+            $('#applied_coupon_id').val('');
+            $('#coupon-info').hide();
+            $('#apply-coupon-section').show();
+            $('#manual-coupon-input').show();
+            $('#remove-discount-btn').remove();
 
-      // Reset the total price to the original value
-      let originalPrice =  document.getElementById('master_total_price').value
-      $('#display-price').text('₹' + originalPrice);
-      $('#total_price').val(originalPrice);
+            // Reset the total price to the original value
+            let originalPrice =  document.getElementById('master_total_price').value
+            $('#display-price').text('₹' + originalPrice);
+            $('#total_price').val(originalPrice);
 
-      // Uncheck all radio buttons and remove active class
-      $('input[name="coupon"]').prop('checked', false);
-      $('.coupon-item').removeClass('active');
+            // Uncheck all radio buttons and remove active class
+            $('input[name="coupon"]').prop('checked', false);
+            $('.coupon-item').removeClass('active');
 
-      showNotification('Discount removed', 'info');
-      }
+            showNotification('Discount removed', 'info');
+        }
 
       // Event listeners
-      $(document).ready(function() {
+        $(document).ready(function() {
           $('#generate-coupon-btn').click(generateCoupon);
           $('#apply-coupon-btn').click(function() { applyCoupon(false); });
           $('#apply-manual-coupon-btn').click(function() { applyCoupon(true); });
           $('#refresh-coupon-btn').click(fetchUserCoupons);
           $(document).on('click', '#remove-discount-btn', removeDiscount);
-      });
+
+
+          $('#decrease-persons').click(function() {
+            let count = parseInt($('#number_of_persons').val(), 10);
+            if (count > 1) {
+              $('#number_of_persons').val(count - 1);
+              updatePrices();
+            }
+          });
+
+          $('#increase-persons').click(function() {
+            let count = parseInt($('#number_of_persons').val(), 10);
+            $('#number_of_persons').val(count + 1);
+            updatePrices();
+          });
+
+          $('#number_of_persons').change(function() {
+            updatePrices();
+          });
+
+          // Distance selection
+          $('input[name="distance"]').change(function() {
+            updatePrices();
+          });
+
+  
+        });
 
 
 
 
       //  RazorPay Script and form validations
 
-      // Wait for the DOM to be fully loaded
-      $(document).ready(function() {
-      const bookNowBtn = $('#book-now-btn');
-      const paymentForm = $('#payment-form');
-      const razorpayBtn = $('#razorpay-payment-button');
-      const displayPrice = $('#display-price');
 
-      // Function to check if the price is greater than 0
-      function isPriceValid() {
-          const price = parseFloat(displayPrice.text().replace('₹', '').trim());
-          return price > 0;
-      }
-
-      // Function to update button state based on price
-      function updateButtonState() {
-          bookNowBtn.prop('disabled', !isPriceValid());
-      }
-
-      // Initial button state
-      updateButtonState();
-
-      // Update button state when price changes (you'll need to trigger this when price is updated)
-      displayPrice.on('DOMSubtreeModified', updateButtonState);
-
-      // Handle "Book Now" button click
-      bookNowBtn.on('click', function() {
-          if (isPriceValid()) {
-              paymentForm.show();
-              bookNowBtn.hide();
-          }
-      });
 
       // Handle form submission
          $(document).ready(function() {
@@ -1239,7 +1268,7 @@
                openRazorpay(amount);
 
           });
-      });
+        });
 
 
       // Function to open Razorpay
@@ -1265,7 +1294,6 @@
           var rzp = new Razorpay(options);
           rzp.open();
       }
-      });
 
 
 

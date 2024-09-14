@@ -133,74 +133,93 @@
             <p class="text-white">Get ready for an amazing experience!</p>
           </div>
 
-            <div class="card mb-4 border-0 shadow-sm">
-              <div class="card-body">
-                <h4 class="card-title text-primary">Booking Details</h4>
-                <ul class="list-group list-group-flush">
+          <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body">
+              <h4 class="card-title text-primary">Booking Details</h4>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Booking ID
+                  <span class="badge bg-primary rounded-pill"><%= @booking.id %></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Check-in Date
+                  <span><%= @booking.booking_details['check_in_date'] %></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Check-out Date
+                  <span><%= @booking.booking_details['check_out_date'] %></span>
+                </li>
+                <% if @show_data.include?("per_person_field") %>
                   <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Booking ID
-                    <span class="badge bg-primary rounded-pill"><%= @booking.id %></span>
+                    Number of Persons
+                    <span><%= @booking.booking_details['number_of_persons'] %></span>
                   </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Check-in Date
-                    <span><%= @booking&.booking_details['check_in_date'] %></span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Check-out Date
-                    <span><%= @booking&.booking_details['check_out_date'] %></span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Total Price
-                    <span class="text-success">₹<%= number_with_delimiter(@booking.booking_details['total_price']) %></span>
-                  </li>
-                </ul>
-              </div>
-            </div>
+                <% end %>
 
+                <% if @show_data.include?("per_km_field") %>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Distance
+                    <span><%= @booking.booking_details['selected_distance'] %> km</span>
+                  </li>
+                <% end %>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Total Price
+                  <span class="text-success">₹<%= number_with_delimiter(@booking.booking_details['total_price']) %></span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <% if @show_data.include?("sharing_fields") %>
             <div class="card mb-4 border-0 shadow-sm">
               <div class="card-body">
                 <h4 class="card-title text-primary">Your Accommodations</h4>
                 <div class="row text-white">
-                  <div class="col-md-4 text-center">
+                  <div class="col-md-3 text-center">
                     <i class="fas fa-bed fa-2x mb-2 text-info"></i>
                     <h5>Double Sharing</h5>
                     <p class="lead"><%= @booking.booking_details['double_sharing'] %></p>
                   </div>
-                  <div class="col-md-4 text-center">
+                  <div class="col-md-3 text-center">
                     <i class="fas fa-users fa-2x mb-2 text-warning"></i>
                     <h5>Triple Sharing</h5>
                     <p class="lead"><%= @booking.booking_details['triple_sharing'] %></p>
                   </div>
-                  <div class="col-md-4 text-center">
+                  <div class="col-md-3 text-center">
                     <i class="fas fa-home fa-2x mb-2 text-success"></i>
                     <h5>Quad Sharing</h5>
                     <p class="lead"><%= @booking.booking_details['quad_sharing'] %></p>
                   </div>
+                  <div class="col-md-3 text-center">
+                    <i class="fas fa-hotel fa-2x mb-2 text-danger"></i>
+                    <h5>Six Sharing</h5>
+                    <p class="lead"><%= @booking.booking_details['six_sharing'] %></p>
+                  </div>
                 </div>
               </div>
             </div>
+          <% end %>
 
-            <div class="card border-0 shadow-sm">
-              <div class="card-body">
-                <h4 class="card-title text-primary">Contact Information</h4>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item"><strong>Name:</strong> <%= @booking.name %></li>
-                  <li class="list-group-item"><strong>Email:</strong> <%= @booking.email %></li>
-                  <li class="list-group-item"><strong>Phone:</strong> <%= @booking.phone %></li>
-                </ul>
-              </div>
+          <div class="card border-0 shadow-sm">
+            <div class="card-body">
+              <h4 class="card-title text-primary">Contact Information</h4>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Name:</strong> <%= @booking.name %></li>
+                <li class="list-group-item"><strong>Email:</strong> <%= @booking.email %></li>
+                <li class="list-group-item"><strong>Phone:</strong> <%= @booking.phone %></li>
+              </ul>
             </div>
           </div>
+        </div>
 
-          <div class="card-footer  text-center py-3">
-            <% if user_signed_in? %>
-              <%= link_to "View All My Bookings", bookings_path, class: "btn btn-primary btn-lg" %>
-            <% else %>
-              <p>Create an account to manage your bookings easily!</p>
-              <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-success btn-lg" %>
-            <% end %>
-            <%= link_to "Explore More Camps", camps_path, class: "btn btn-outline-primary btn-lg " %>
-          </div>
+        <div class="card-footer text-center py-3">
+          <% if @booking.user_id.present? %>
+            <%= link_to "View All My Bookings", bookings_path, class: "btn btn-primary btn-lg" %>
+          <% else %>
+            <p>Create an account to manage your bookings easily!</p>
+            <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-success btn-lg" %>
+          <% end %>
+          <%= link_to "Explore More Camps", camps_path, class: "btn btn-outline-primary btn-lg" %>
         </div>
       </div>
     </div>

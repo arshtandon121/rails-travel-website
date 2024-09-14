@@ -22,15 +22,14 @@ class CampsController < ApplicationController
     camp_margin = camp.try(:margin).try(:margin).presence || 0
     total_days = (check_out - check_in).to_i
   
-    if camp.category == "adventure_activities"
-      per_person_price = camp.camp_price.per_km.to_f
-      day_prices = {
-        'adventure' => {
-          total_price: per_person_price * total_days,
-          per_person_price: per_person_price,
-          total_days: total_days,
-        }
+    if camp.per_km_field?
+      per_km_price = camp.camp_price.per_km.to_f
+      render json: {
+        day_prices: per_km_price,
+        total_days: total_days,
+        average_per_person_prices: per_km_price
       }
+      return
     else
       sharing_types = ['double', 'triple', 'quad', 'six']
       prices = {}

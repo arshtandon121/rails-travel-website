@@ -31,6 +31,8 @@ class BookingsController < ApplicationController
       quad_sharing: params[:quad_sharing],
       six_sharing: params[:six_sharing],
       number_of_persons: params[:hidden_number_of_persons],
+      selected_distance: params[:selected_distance],
+
       user_coupon_used: params[:applied_coupon_id].present? ? true : false,
       user_coupon_code: params[:applied_coupon_id].present? ? params[:applied_coupon_id] : nil
     }
@@ -82,6 +84,12 @@ class BookingsController < ApplicationController
  def show
     booking_id = params[:id]
     @booking = Booking.find_by(id: booking_id)
+    @show_data = []
+
+    @camp = @booking.camp
+    @camp.sharing_fields? ?  @show_data << 'sharing_fields' : ""
+    @camp.per_person_field? ?  @show_data << 'per_person_field' : ""
+    @camp.per_km_field? ?  @show_data << 'per_km_field' : ""
  end
 
  private 
