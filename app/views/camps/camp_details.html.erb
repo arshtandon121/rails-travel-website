@@ -916,11 +916,11 @@
             const selectedDistance = parseInt($('input[name="distance"]:checked').val());
             const perKmPrice = perPersonPrices.km;
             totalPrice += selectedDistance * perKmPrice ;
-          }
             $('#selected_distance').val(selectedDistance)
+          }
         }
 
-        const personInput = document.getElementById('number_of_persons').val();
+        const personInput = parseInt($('#number_of_persons').val());
         $('#display-price').text(`₹${totalPrice.toFixed(2)}`);
         $('#total_price').val(totalPrice);
         $('#hidden_number_of_persons').val(personInput);
