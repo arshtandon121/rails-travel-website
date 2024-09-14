@@ -22,6 +22,7 @@ Rails.application.routes.draw do
 
   # get daily price
   get 'get_day_prices', to: 'camps#get_day_prices'
+  
 
   post '/webhooks/razorpay', to: 'webhooks#razorpay'
  
@@ -53,6 +54,8 @@ Rails.application.routes.draw do
   put 'camps/:id', to: 'camps#update'
   delete 'camps/:id', to: 'camps#destroy'
 
+  get 'camps/calculate_pricing', to: 'camps#calculate_pricing'  
+  post 'camps/verify_price', to: 'camps#verify_price'
   get 'camps/category/:category', to: 'camps#category', as: 'camps_category'
 
   # Root route

@@ -12,7 +12,7 @@ class CampChangeRequest < ApplicationRecord
   validates :person, presence: true, numericality: { greater_than: 0 }
 
   def self.ransackable_attributes(auth_object = nil)
-    ["name", "person", "available", "category", "description", "camp_duration", "location", "feature", "camp_pic", "admin_approved", "created_at", "updated_at", "camp_id", "user_id"]
+    ["name", "person", "available", "category", "description", "camp_duration", "location", "feature", "camp_pic", "admin_approved", "created_at", "updated_at", "camp_id", "user_id","rating"]
   end
 
   def self.ransackable_associations(auth_object = nil)

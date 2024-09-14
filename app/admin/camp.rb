@@ -1,6 +1,6 @@
 ActiveAdmin.register Camp do
   permit_params :name,  :person, :available, :category, :user_id,
-  :description, :camp_duration, :location, :feature, :camp_pic, :authorized, :rating
+  :description, :camp_duration, :location, :feature, :camp_pic, :authorized, :rating, :sharing_fields, :per_person_field, :per_km_field
 
   filter :name
   filter :category
@@ -55,7 +55,7 @@ ActiveAdmin.register Camp do
         f.input :name
         f.input :person
         f.input :available
-        f.inpur :rating
+        f.input :rating
         f.input :category, as: :select, collection: Camp.categories.keys
         f.input :user_id, as: :select, collection: User.where(role: :camp_owner).pluck(:name, :id)
         f.input :description
@@ -64,6 +64,9 @@ ActiveAdmin.register Camp do
         f.input :feature, as: :text
         f.input :camp_pic, as: :text
         f.input :authorized
+        f.input :sharing_fields
+        f.input :per_person_field
+        f.input :per_km_field
       end
       f.actions
     end
@@ -82,6 +85,9 @@ ActiveAdmin.register Camp do
     column :camp_duration
     column :location
     column :authorized
+    column :sharing_fields
+    column :per_person_field
+    column :per_km_field
     actions
   end
 
@@ -100,6 +106,9 @@ ActiveAdmin.register Camp do
       row :feature
       row :camp_pic
       row :authorized
+      row :sharing_fields
+      row :per_person_field
+      row :per_km_field
     end
   end
 end

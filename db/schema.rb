@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_08_31_054627) do
+ActiveRecord::Schema[7.0].define(version: 2024_09_08_111700) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -129,6 +129,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_08_31_054627) do
     t.string "location"
     t.text "feature", default: [], array: true
     t.decimal "rating", precision: 3, scale: 2, default: "0.0"
+    t.boolean "sharing_fields", default: false, null: false
+    t.boolean "per_person_field", default: false, null: false
+    t.boolean "per_km_field", default: false, null: false
   end
 
   create_table "margins", force: :cascade do |t|

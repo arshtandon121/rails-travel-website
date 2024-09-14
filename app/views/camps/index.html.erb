@@ -345,7 +345,7 @@ footer {
     <div class="mt-4">
         <% @camps.keys.each do |category| %>
             <section id="<%= category %>"  class="category-section check-width">
-            <h2><%= category.to_s.humanize.capitalize %></h2>
+            <h2 style="margin-left: 45px;"><%= category.to_s.humanize.capitalize %></h2>
             <%= render partial: 'camp_row', locals: { camps: @camps[category], category: category } %>
             </section>
         <% end %>

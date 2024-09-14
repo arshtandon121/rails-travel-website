@@ -11,10 +11,16 @@ class BookingsController < ApplicationController
     @camp = Camp.find(params[:camp_id])
 
     # Find or create a user
-    user = User.find_by(email: params[:email].downcase)
-    if user.nil?
-      user = User.create_guest(name: params[:name], email: params[:email], phone: params[:phone])
+    if current_user.present?
+      user = current_user
+    else
+      user = User.find_by(email: params[:email].downcase)
+        if user.nil?
+          user = User.create_guest(name: params[:name], email: params[:email], phone: params[:phone])
+        end
     end
+
+    
   
     booking_details = {
       total_price: params[:total_price],

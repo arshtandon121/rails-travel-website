@@ -10,5 +10,5 @@ class Margin < ApplicationRecord
     def self.ransackable_associations(auth_object = nil)
       ["camp"]
     end
-  end
+end
   

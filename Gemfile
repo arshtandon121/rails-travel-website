@@ -14,7 +14,7 @@ gem "sprockets-rails"
 
 gem 'pg'
 
-gem 'dotenv-rails', groups: [:development, :test]
+gem 'dotenv-rails', groups: [:development, :test, :production]
 
 # Gemfile
 gem 'twilio-ruby', '~> 5.60'

@@ -1,5 +1,5 @@
 class CampsController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show, :category, :get_day_prices]
+  before_action :authenticate_user!, except: [:index, :show, :category, :get_day_prices, :verify_price]
   before_action :set_camp, only: [:show, :edit, :update, :destroy]
   before_action :authorize_user, only: [:edit, :update, :destroy]
 
@@ -13,19 +13,22 @@ class CampsController < ApplicationController
     end.to_h
   end
 
-  # camps_controller.rb or appropriate controller
+
   def get_day_prices
+   
     camp = Camp.find(params[:camp_id])
     check_in = Date.parse(params[:check_in])
     check_out = Date.parse(params[:check_out])
+    camp_margin = camp.try(:margin).try(:margin).presence || 0
+    total_days = (check_out - check_in).to_i
   
     if camp.category == "adventure_activities"
       per_person_price = camp.camp_price.per_km.to_f
       day_prices = {
         'adventure' => {
-          total_price: per_person_price,
+          total_price: per_person_price * total_days,
           per_person_price: per_person_price,
-          total_days: (check_out - check_in).to_i,
+          total_days: total_days,
         }
       }
     else
@@ -37,29 +40,44 @@ class CampsController < ApplicationController
       end
   
       day_prices = {}
-      (check_in..check_out).each do |date|
+      (check_in...check_out).each do |date|
         day = date.strftime('%A').downcase
         day_prices[date.to_s] = {}
         sharing_types.each do |type|
           price_key = "#{type}_price_#{day}"
-          total_price = prices[type][price_key].to_f
-          persons = type == 'double' ? 2 : (type == 'triple' ? 3 : (type == 'quad' ? 4 : 6))
-          per_person_price = persons > 0 ? (total_price / persons).round(2) : 0
+          base_price = prices[type][price_key].to_f
+          puts"---price_key--#{price_key}------base_price---#{base_price}-"
+          persons = case type
+                    when 'double' then 2
+                    when 'triple' then 3
+                    when 'quad' then 4
+                    when 'six' then 6
+                    end
+                    
+          per_person_price_with_margin = (base_price + camp_margin).round(2)
+          total_price = per_person_price_with_margin * persons 
   
           day_prices[date.to_s][type] = {
             total_price: total_price,
-            per_person_price: per_person_price
+            per_person_price: per_person_price_with_margin,
           }
         end
+      end
+  
+      # Calculate average per-person price for each sharing type
+      average_prices = {}
+      sharing_types.each do |type|
+        average_prices[type] = calculate_average_per_person_price(day_prices, type, total_days)
       end
     end
   
     render json: {
       day_prices: day_prices,
-      total_days: (check_out - check_in).to_i,
-      category: camp.category
+      total_days: total_days,
+      average_per_person_prices: average_prices
     }
   end
+ 
 
   def show
     render "camp_details"
@@ -84,6 +102,13 @@ class CampsController < ApplicationController
   end
 
   private
+
+
+
+  def calculate_average_per_person_price(day_prices, sharing_type, total_days)
+    total_per_person_price = day_prices.sum { |_, prices| prices[sharing_type][:per_person_price] }
+    (total_per_person_price).round(2)
+  end
 
   def set_camp
     @camp = Camp.find(params[:id])

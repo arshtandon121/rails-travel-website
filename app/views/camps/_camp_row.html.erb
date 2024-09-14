@@ -365,6 +365,9 @@
       let startX;
       let scrollLeft;
       let momentumID;
+      let lastTime = 0;
+      let lastScrollLeft = 0;
+      let velocity = 0;
 
       function smoothScroll(target, duration) {
         const start = scrollContainer.scrollLeft;
@@ -405,32 +408,42 @@
         smoothScroll(scrollContainer.scrollLeft + 300, 500);
       });
 
-      scrollContainer.addEventListener('scroll', toggleScrollButtons);
+      scrollContainer.addEventListener('scroll', () => {
+        requestAnimationFrame(toggleScrollButtons);
+      });
       window.addEventListener('resize', toggleScrollButtons);
       toggleScrollButtons();
 
-      // Touch and mouse events for smooth scrolling
-      scrollContainer.addEventListener('mousedown', startDrag);
-      scrollContainer.addEventListener('touchstart', startDrag);
-      scrollContainer.addEventListener('mousemove', drag);
-      scrollContainer.addEventListener('touchmove', drag);
-      scrollContainer.addEventListener('mouseup', endDrag);
-      scrollContainer.addEventListener('mouseleave', endDrag);
+      // Optimized touch and mouse events for smooth scrolling
+      scrollContainer.addEventListener('touchstart', startDrag, { passive: true });
+      scrollContainer.addEventListener('touchmove', drag, { passive: false });
       scrollContainer.addEventListener('touchend', endDrag);
 
       function startDrag(e) {
         isScrolling = true;
-        startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
+        startX = e.touches[0].pageX;
         scrollLeft = scrollContainer.scrollLeft;
+        lastTime = Date.now();
+        lastScrollLeft = scrollLeft;
+        velocity = 0;
         cancelMomentumTracking();
       }
 
       function drag(e) {
         if (!isScrolling) return;
         e.preventDefault();
-        const x = e.type === 'mousemove' ? e.pageX : e.touches[0].pageX;
-        const walk = (x - startX) * 2;
-        scrollContainer.scrollLeft = scrollLeft - walk;
+        const x = e.touches[0].pageX;
+        const walk = (startX - x) * 2;
+        const newScrollLeft = scrollLeft + walk;
+        scrollContainer.scrollLeft = newScrollLeft;
+
+        const now = Date.now();
+        const dt = now - lastTime;
+        if (dt > 0) {
+          velocity = (newScrollLeft - lastScrollLeft) / dt;
+        }
+        lastTime = now;
+        lastScrollLeft = newScrollLeft;
       }
 
       function endDrag() {
@@ -448,18 +461,20 @@
       }
 
       function momentumLoop() {
-        const currentScroll = scrollContainer.scrollLeft;
-        const delta = currentScroll - scrollLeft;
-        scrollLeft = currentScroll;
+        const now = Date.now();
+        const dt = now - lastTime;
+        lastTime = now;
 
-        if (Math.abs(delta) > 0.5) {
+        if (Math.abs(velocity) > 0.1) {
+          scrollContainer.scrollLeft += velocity * dt;
+          velocity *= 0.95;
           momentumID = requestAnimationFrame(momentumLoop);
-          scrollContainer.scrollLeft += delta * 0.95;
+        } else {
+          cancelMomentumTracking();
         }
       }
     }
   });
 });
-
 
   </script>

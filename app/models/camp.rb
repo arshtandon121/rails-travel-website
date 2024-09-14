@@ -14,7 +14,11 @@ class Camp < ApplicationRecord
 
   # Ransackable attributes and associations for search functionality
   def self.ransackable_attributes(auth_object = nil)
-    ["available", "camp_pic", "category", "authorized", "created_at", "details", "id", "name", "person","rating", "updated_at"]
+    [
+      "available", "camp_pic", "category", "authorized", 
+      "created_at", "details", "id", "name", "person",
+      "rating", "description", "camp_duration", "location", "updated_at"
+    ]
   end
 
   def self.ransackable_associations(auth_object = nil)
