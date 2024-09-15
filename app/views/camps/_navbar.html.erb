@@ -91,8 +91,8 @@
                     <li class="nav-item">
                         <span class="nav-link"><%= current_user.email %></span>
                     </li>
-                    <li class="nav-item">
-                        <%= link_to "Sign Out", destroy_user_session_path, class: "nav-link", data: { "turbo-method": :delete } %>
+                   <li class="nav-item">
+                        <%= link_to "Sign Out", "#", class: "nav-link", id: "ajax-sign-out" %>
                     </li>
                 <% else %>
                     <li class="nav-item">
@@ -132,5 +132,32 @@ document.addEventListener('DOMContentLoaded', function () {
             optionsLogo.setAttribute('aria-expanded', 'false');
         });
     });
+
+     const signOutLink = document.getElementById('ajax-sign-out');
+    if (signOutLink) {
+        signOutLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        fetch('<%= destroy_user_session_path %>', {
+            method: 'DELETE',
+            headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        }).then(response => {
+            if (response.ok) {
+            window.location.href = '/'; // Redirect to home page or any other page after successful sign out
+            } else {
+            console.error('Sign out failed');
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+        });
+    }
+
+
 });
 </script>
