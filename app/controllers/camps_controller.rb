@@ -27,7 +27,7 @@ class CampsController < ApplicationController
       render json: {
         day_prices: per_km_price,
         total_days: total_days,
-        average_per_person_prices: per_km_price
+        average_per_person_prices: per_km_price + camp_margin
       }
       return
     else

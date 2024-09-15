@@ -555,6 +555,15 @@
             <% end %>
           </div>
         </div>
+
+          <div class="celebration-overlay" id="celebrationOverlay">
+                    <div class="celebration-content">
+                        <h2>Woohoo! Discount Applied!</h2>
+                        <p>You just saved some money! 🎉💰</p>
+                    </div>
+
+          </div>
+          
         <!-- Right Column: Booking Form -->
         <div class="col-md-4">
           <div class="lg-fixed">
@@ -563,6 +572,7 @@
             <button id="book-now-btn" class="btn btn-lg btn-purchase w-100 mb-3">Book Now</button>
             <%= form_tag bookings_path, method: :post, id: 'payment-form', style: 'display: none;' do %>
               <%= hidden_field_tag :camp_id, @camp.id %>
+              <%= hidden_field_tag :master_total_price, 0 %>              
               <%= hidden_field_tag :razorpay_payment_id %>
               <%= hidden_field_tag :double_sharing %>
               <%= hidden_field_tag :triple_sharing %>
@@ -609,6 +619,10 @@
                 <button id="apply-manual-coupon-btn" class="coupon-btn">Apply Coupon</button>
                 <div id="manual-coupon-loader" class="loader" style="display: none;"></div>
               </div>
+               <div id="coupon-info" class="coupon-info">
+                        <p>Applied Coupon: <span id="applied-coupon">None</span></p>
+                        <p>Discount: <span id="coupon-discount">₹0.00</span></p>
+                  </div>
             </div>
           </div>
         </div>
@@ -1123,8 +1137,10 @@
 
                         showCelebration();
                         $('#coupon-info').append('<button id="remove-discount-btn" class="btn btn-sm btn-danger mt-2">Remove Discount</button>');
+                        console.log()
                         setTimeout(function() {
                             $('#coupon-info').removeClass('joy-animation');
+                            console.log("here")
                         }, 500);
 
                         // Update the total price display
