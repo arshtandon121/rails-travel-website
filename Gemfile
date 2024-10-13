@@ -19,6 +19,10 @@ gem 'dotenv-rails', groups: [:development, :test, :production]
 # Gemfile
 gem 'twilio-ruby', '~> 5.60'
 
+gem 'pry'
+
+gem 'pry-rails'
+
 gem 'pundit'
 
 

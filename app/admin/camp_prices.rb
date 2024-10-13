@@ -3,11 +3,11 @@ ActiveAdmin.register CampPrice do
 
   form do |f|
     f.inputs 'Camp Price Details' do
-      f.input :camp_id, as: :select, collection: Camp.all.pluck(:name, :id)
+      f.input :camp_id, as: :select, collection: Camp.where(camps: { user_id: current_admin_user.user_id }).pluck(:name, :id)
 
       # Radio buttons for pricing type
       f.input :pricing_type, as: :radio, collection: ['Per Km', 'Sharing'], input_html: { class: 'pricing-type-radio' }
-
+     
       # Per Km pricing field
       f.inputs class: 'per-km-pricing' do
         f.input :per_km
@@ -41,6 +41,19 @@ ActiveAdmin.register CampPrice do
 
 
   controller do
+
+    def scoped_collection
+      collection = super
+      collection = collection.joins(:camp).where(camps: { user_id: current_admin_user.user_id }) unless current_admin_user.admin?
+      collection.page(params[:page]).per(10)
+    end
+  
+    def index
+      super do |format|
+        @camp_prices = scoped_collection
+      end
+    end
+
     def create
       @camp_price = CampPrice.new(permitted_params[:camp_price])
 
@@ -84,6 +97,9 @@ ActiveAdmin.register CampPrice do
     selectable_column
     id_column
     column :camp_id
+    column :camp_name do |camp_price|
+      camp_price.camp.name 
+    end
     column :per_km
     column :sharing_enabled
 

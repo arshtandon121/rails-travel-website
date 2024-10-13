@@ -9,10 +9,11 @@ class User < ApplicationRecord
   has_many :camps, foreign_key: 'user_id'
   has_many :camp_change_requests
   has_many :user_coupons
+  has_many :admin_users
 
   enum role: { user: 0, camp_owner: 1, admin: 2 }
 
-  after_save :sync_admin_user
+  after_commit :sync_admin_user, if: :saved_changes?
   after_destroy :destroy_admin_user
 
   def self.ransackable_attributes(auth_object = nil)
@@ -66,30 +67,41 @@ class User < ApplicationRecord
     role == 'camp_owner'
   end
 
+  def without_auto_sync
+    self.class.skip_callback(:save, :after, :sync_admin_user, raise: false)
+    yield
+  ensure
+    self.class.set_callback(:save, :after, :sync_admin_user, raise: false)
+  end
+
   private
 
   def user_params
     params.require(:user).permit(:email, :password, :password_confirmation)
   end
 
+  
+
 
   def sync_admin_user
-    return unless camp_owner? || admin?
+    admin_user = AdminUser.find_by(user_id: id)
+    return unless admin_user
 
-    admin_user = AdminUser.find_or_initialize_by(email: email)
-    admin_user.assign_attributes(
-      encrypted_password: encrypted_password,
-      reset_password_token: reset_password_token,
-      reset_password_sent_at: reset_password_sent_at,
-      remember_created_at: remember_created_at,
-      role: role,
-      guest: guest
-    )
-    admin_user.save
+    admin_user.without_auto_sync do
+      admin_user.update(
+        email: email,
+        encrypted_password: encrypted_password,
+        reset_password_token: reset_password_token,
+        reset_password_sent_at: reset_password_sent_at,
+        remember_created_at: remember_created_at,
+        role: role,
+        guest: guest
+      )
+    end
   end
 
   def destroy_admin_user
-    admin_user = AdminUser.find_by(email: email)
+    admin_user = AdminUser.find_by(user_id: id)
     admin_user.&destroy if admin_user.present?
   end
 

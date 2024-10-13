@@ -7,12 +7,12 @@ ActiveAdmin.register Margin do
     private
 
     def authorize_admin
-      redirect_to admin_root_path, alert: 'You are not authorized to access this page.' unless current_user.admin?
+      redirect_to admin_root_path, alert: 'You are not authorized to access this page.' unless current_admin_user.admin?
     end
   end
 
   # Optional: If you want to hide the menu item for non-admin users
-  menu if: proc { current_user.admin? }
+  menu if: proc { current_admin_user.admin? }
 
 
   

@@ -5,7 +5,7 @@ ActiveAdmin.register Payment do
 
   controller do
     before_action :authorize_user, :set_payment_totals
-    before_action :authorize_admin, only: [:new, :create]
+    before_action :authorize_admin, only: [:new, :create, :edit, :destroy]
     
 
     def scoped_collection
@@ -15,7 +15,7 @@ ActiveAdmin.register Payment do
     def index
       super do |format|
         @payments = scoped_collection
-        @payments = @payments.joins(booking: :camp).where(camps: { user_id: current_user.id }) unless current_user.admin?
+        @payments = @payments.joins(booking: :camp).where(camps: { user_id: current_admin_user.user_id }) unless current_admin_user.admin?
       end
     end
 
@@ -28,8 +28,8 @@ ActiveAdmin.register Payment do
     end
 
     def authorize_admin
-      unless current_user.admin?
-        redirect_to admin_root_path, alert: "You are not authorized to perform this action."
+      unless current_admin_user.admin?
+        redirect_to admin_payments_path, alert: "You are not authorized to perform this action."
       end
     end
 
@@ -57,7 +57,7 @@ ActiveAdmin.register Payment do
   end
 
   form do |f|
-    if current_user.admin?
+    if current_admin_user.admin?
       f.inputs "Payment Details" do
         f.input :amount, as: :number, input_html: { min: 0.01 }
         f.input :booking
@@ -71,7 +71,7 @@ ActiveAdmin.register Payment do
         f.input :payment_cleared_to_camp
       end
       f.actions
-  end
+    end
   end
 
   show do

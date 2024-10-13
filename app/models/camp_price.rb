@@ -1,6 +1,8 @@
 class CampPrice < ApplicationRecord
   belongs_to :camp
   before_save :normalize_meta
+  
+  validates :camp_id, uniqueness: true, presence: true
 
   # Store the meta column 
   META = [

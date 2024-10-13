@@ -1,8 +1,8 @@
 ActiveAdmin.register CampChangeRequest do
-  permit_params :camp_id, :name, :person, :available, :category, :description, 
-                :camp_duration, :location, :feature, :camp_pic, :admin_approved, :user_id, :rating
+  permit_params :camp_id, :name, :person, :available, :category, :description,
+                 :camp_duration, :location, :feature, :camp_pic, :admin_approved, :user_id, :rating
 
-                config.batch_actions = true
+  config.batch_actions = true
 
   filter :name
   filter :category
@@ -18,23 +18,23 @@ ActiveAdmin.register CampChangeRequest do
     before_action :authorize_admin, only: [:edit, :update, :destroy, :approve_camps]
 
     def authorize_admin
-      unless current_user.admin?
+      unless current_admin_user.admin?
         redirect_to admin_camp_change_requests_path, alert: "You are not authorized to perform this action."
       end
     end
 
     def scoped_collection
-      if current_user.admin?
+      if current_admin_user.admin?
         super
       else
-        super.where(user_id: current_user.id)
+        super.where(user_id: current_admin_user.id)
       end
     end
 
     def create
       @camp_change_request = CampChangeRequest.new(camp_change_request_params)
-      @camp_change_request.user = current_user unless current_user.admin?
-  
+      @camp_change_request.user_id = current_admin_user.id unless current_admin_user.admin?
+
       if @camp_change_request.save
         redirect_to admin_camp_change_request_path(@camp_change_request), notice: 'Camp change request was successfully created.'
       else
@@ -52,12 +52,22 @@ ActiveAdmin.register CampChangeRequest do
         render :edit, alert: 'Failed to update camp change request.'
       end
     end
-  
+
+    def show
+      @camp_change_request = CampChangeRequest.find(params[:id])
+    end
+
+    def approve
+      @camp_change_request = CampChangeRequest.find(params[:id])
+      @camp_change_request.update(admin_approved: true)
+      redirect_to admin_camp_change_requests_path, notice: 'Camp change request has been approved.'
+    end
+
     private
-  
+
     def camp_change_request_params
-      params.require(:camp_change_request).permit(:camp_id, :name, :person, :available, :category, 
-                                                  :description, :camp_duration, :location, :feature, 
+      params.require(:camp_change_request).permit(:camp_id, :name, :person, :available, :category,
+                                                  :description, :camp_duration, :location, :feature,
                                                   :camp_pic, :admin_approved, :user_id, :rating)
     end
   end
@@ -65,7 +75,7 @@ ActiveAdmin.register CampChangeRequest do
   form do |f|
     f.semantic_errors *f.object.errors
     f.inputs "Camp Change Request Details" do
-      f.input :camp_id, as: :select, collection: Camp.all.map { |c| [c.name, c.id] }
+      f.input :camp_id, as: :select, collection: current_admin_user.admin? ? Camp.all.map { |c| [c.name, c.id] } : current_admin_user.user.camps.map { |c| [c.name, c.id] }
       f.input :name
       f.input :person
       f.input :user_id, as: :select, collection: User.all.pluck(:name, :id), input_html: { disabled: true }
@@ -77,7 +87,7 @@ ActiveAdmin.register CampChangeRequest do
       f.input :location
       f.input :feature, as: :text
       f.input :camp_pic, as: :text
-      f.input :admin_approved if current_user.admin?
+      f.input :admin_approved if current_admin_user.admin?
     end
     f.actions
   end
@@ -96,7 +106,9 @@ ActiveAdmin.register CampChangeRequest do
     column :camp_duration
     column :location
     column :admin_approved
-    actions
+    actions do |camp_change_request|
+      item "Approve", approve_admin_camp_change_request_path(camp_change_request), method: :put, class: "member_link" if !camp_change_request.admin_approved && authorized?(:approve, camp_change_request) && current_admin_user.admin?
+    end
   end
 
   show do
@@ -118,12 +130,15 @@ ActiveAdmin.register CampChangeRequest do
     end
   end
 
-  # Batch action to approve selected CampChangeRequests
-  batch_action :approve_camps, form: {
-    admin_approved: ['Approve']
-  } do |ids, inputs|
-    CampChangeRequest.where(id: ids).update_all(admin_approved: true)
+  batch_action :approve_camps do |ids|
+    batch_action_collection.find(ids).each do |camp_change_request|
+      camp_change_request.update(admin_approved: true)
+    end
     redirect_to collection_path, notice: "Selected camp change requests have been approved."
   end
 
+  member_action :approve, method: :put do
+    resource.update(admin_approved: true)
+    redirect_to resource_path, notice: "Camp change request has been approved."
+  end
 end

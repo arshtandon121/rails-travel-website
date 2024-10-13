@@ -14,7 +14,7 @@ ActiveAdmin.register Booking do
         def index
           super do |format|
             @bookings = scoped_collection
-            @bookings = @bookings.joins(:camp).where(camps: { user_id: current_user.id }) unless current_user.admin?
+            @bookings = @bookings.joins(:camp).where(camps: { user_id: current_admin_user.user_id }) unless current_admin_user.admin?
           end
         end
           private
@@ -26,7 +26,7 @@ ActiveAdmin.register Booking do
           end
 
           def authorize_admin
-            unless current_user.admin?
+            unless current_admin_user.admin?
               redirect_to admin_root_path, alert: "You are not authorized to perform this action."
             end
           end

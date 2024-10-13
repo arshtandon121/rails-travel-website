@@ -23,34 +23,34 @@ ActiveAdmin.register Camp do
     
     def authorize_user
       camp = Camp.find(params[:id])
-      unless current_user.admin? || camp.user == current_user
+      unless current_admin_user.admin? || camp.user == current_admin_user.user
         redirect_to admin_camps_path, alert: "You are not authorized to perform this action."
       end
     end
 
     def check_delete_access
-      unless current_user.admin?
+      unless current_admin_user.admin?
         redirect_to admin_camps_path, alert: "You are not authorized to perform this action."
       end
     end
 
     def authorize_admin
-      unless current_user.admin?
+      unless current_admin_user.admin?
         redirect_to admin_root_path, alert: "You are not authorized to perform this action."
       end
     end
 
     def scoped_collection
-      if current_user.admin?
+      if current_admin_user.admin?
         super
       else
-        super.where(user_id: current_user.id)
+        super.where(user_id: current_admin_user.user_id)
       end
     end
   end
 
   form do |f|
-    if current_user.admin?
+    if current_admin_user.admin?
       f.inputs "Camp Details" do
         f.input :name
         f.input :person

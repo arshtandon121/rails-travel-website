@@ -17,15 +17,20 @@
 
 
 .camp-scroll-container {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-}
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    gap: 1rem;
+  }
 
-.camp-card {
-  scroll-snap-align: start;
-}
+   .camp-scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+
+
+
 
   .category-tag {
     flex: 0 0 auto;
@@ -45,17 +50,6 @@
   }
 
 
-  .camp-scroll-container {
-    display: flex;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    gap: 1rem;
-    padding: 10px 0;
-    margin-left: -10px; /* Compensate for the gap and padding */
-    margin-right: -50px; /* Compensate for the gap and padding */
-    -webkit-overflow-scrolling: touch;
-    /* Add other necessary styles */
-  }
 
   .camp-images {
     position: relative;
@@ -105,18 +99,12 @@
     background-color: rgba(255, 255, 255, 1);
   }
 
-  .category-row {
+.category-row {
     position: relative;
     margin-bottom: 2rem;
     padding: 0 40px;
   }
 
-  .camp-scroll-container {
-    display: flex;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-    gap: 1rem;
-  }
 
   .camp-card {
     flex: 0 0 300px;
@@ -259,11 +247,9 @@
     flex: 0 0 220px; /* Reduced from 300px */
   }
 
-  .category-row {
-    margin-right: 2.9rem;
-    margin-bottom: 2rem;
-    padding: 0 10px 0px 15px;
-  }
+ .category-row {
+      padding: 0 10px 0 15px;
+    }
   .camp-images {
     height: 150px; /* Reduced from 200px */
   }
@@ -318,15 +304,15 @@
 
   </style>
 
-  <div class="category-row">
-    <button class="scroll-btn prev-btn d-lg-block d-none" style="z-index: 900;" aria-label="Previous">&lt;</button>
-    <button class="scroll-btn next-btn d-lg-block d-none" style="z-index: 900;" aria-label="Next">&gt;</button>
-    
-    <div class="camp-scroll-container">
+<div class="category-row">
+  <button class="scroll-btn prev-btn d-lg-block d-none" aria-label="Previous">&lt;</button>
+  <button class="scroll-btn next-btn d-lg-block d-none" aria-label="Next">&gt;</button>
+  
+  <div class="camp-scroll-container">
     <% camps.each do |camp| %>
       <div class="camp-card">
         <div class="camp-images">
-          <div style="z-index: 900;" class="camp-badge">Save INR <%= camp[:discount] %></div>
+          <div class="camp-badge">Save INR <%= camp[:discount] %></div>
           <div class="image-carousel" id="carousel-<%= camp[:id] %>">
             <% camp[:images].each_with_index do |image, index| %>
               <img src="<%= image[:url] %>" alt="<%= camp[:name] %>" class="<%= 'active' if index == 0 %>">
@@ -345,101 +331,90 @@
           </div>
           <p><i class="fas fa-map-marker-alt"></i> <%= camp[:location] %></p>
           <p><i class="fas fa-clock"></i> <%= camp[:duration] %></p>
-
-          <% if category == "adventure_activities" %>
-           
-          <% else %>
+          <% if category != "adventure_activities" %>
             <p class="camp-price">INR <%= camp[:price] %></p>
           <% end %>
-          <span class="w-100 d-flex text-center">
-            <%= link_to 'View Details', camp_path(camp[:id]), class: 'view-details-btn' %>
-          </span>
+          <%= link_to 'View Details', camp_path(camp[:id]), class: 'view-details-btn' %>
         </div>
       </div>
     <% end %>
   </div>
 
+  <% if camps.length > 3 %>
+    <%= link_to 'Discover More', camps_category_path(category: category), class: 'discover-more-btn' %>
+  <% end %>
+</div>
 
-    <% if camps.length > 3 %>
-      <%= link_to 'Discover More', camps_category_path(category: category), class: 'discover-more-btn' %>
-    <% end %>
-  </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const categoryRows = document.querySelectorAll('.category-row');
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scroll/16.1.3/smooth-scroll.min.js"></script>
+  categoryRows.forEach(row => {
+    const scrollContainer = row.querySelector('.camp-scroll-container');
+    const prevBtn = row.querySelector('.prev-btn');
+    const nextBtn = row.querySelector('.next-btn');
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const categoryRows = document.querySelectorAll('.category-row');
+    if (scrollContainer && prevBtn && nextBtn) {
+      const smoothScroll = (target, duration) => {
+        const start = scrollContainer.scrollLeft;
+        const distance = target - start;
+        let startTime = null;
 
-    categoryRows.forEach(row => {
-        const scrollContainer = row.querySelector('.camp-scroll-container');
-        const prevBtn = row.querySelector('.prev-btn');
-        const nextBtn = row.querySelector('.next-btn');
+        const animation = (currentTime) => {
+          if (startTime === null) startTime = currentTime;
+          const timeElapsed = currentTime - startTime;
+          const run = easeInOutQuad(timeElapsed, start, distance, duration);
+          scrollContainer.scrollLeft = run;
+          if (timeElapsed < duration) requestAnimationFrame(animation);
+        };
 
-        if (scrollContainer && prevBtn && nextBtn) {
-            function smoothScroll(target, duration) {
-                const start = scrollContainer.scrollLeft;
-                const distance = target - start;
-                let startTime = null;
+        requestAnimationFrame(animation);
+      };
 
-                function animation(currentTime) {
-                    if (startTime === null) startTime = currentTime;
-                    const timeElapsed = currentTime - startTime;
-                    const run = ease(timeElapsed, start, distance, duration);
-                    scrollContainer.scrollLeft = run;
-                    if (timeElapsed < duration) requestAnimationFrame(animation);
-                }
+      const easeInOutQuad = (t, b, c, d) => {
+        t /= d / 2;
+        if (t < 1) return c / 2 * t * t + b;
+        t--;
+        return -c / 2 * (t * (t - 2) - 1) + b;
+      };
 
-                function ease(t, b, c, d) {
-                    return c * (-Math.pow(2, -10 * t/d) + 1) + b;
-                }
+      const toggleScrollButtons = () => {
+        prevBtn.style.display = scrollContainer.scrollLeft > 0 ? 'flex' : 'none';
+        nextBtn.style.display = 
+          scrollContainer.scrollLeft < scrollContainer.scrollWidth - scrollContainer.clientWidth 
+          ? 'flex' 
+          : 'none';
+      };
 
-                requestAnimationFrame(animation);
-            }
+      prevBtn.addEventListener('click', () => smoothScroll(scrollContainer.scrollLeft - 300, 300));
+      nextBtn.addEventListener('click', () => smoothScroll(scrollContainer.scrollLeft + 300, 300));
 
-            function toggleScrollButtons() {
-                prevBtn.style.display = scrollContainer.scrollLeft > 0 ? 'flex' : 'none';
-                nextBtn.style.display = 
-                    scrollContainer.scrollLeft < scrollContainer.scrollWidth - scrollContainer.clientWidth 
-                    ? 'flex' 
-                    : 'none';
-            }
+      scrollContainer.addEventListener('scroll', toggleScrollButtons);
+      window.addEventListener('resize', toggleScrollButtons);
+      toggleScrollButtons();
 
-            prevBtn.addEventListener('click', () => {
-                smoothScroll(scrollContainer.scrollLeft - 300, 200);
-            });
+      // Touch events for manual scrolling
+      let isScrolling = false;
+      let startX;
+      let scrollLeft;
 
-            nextBtn.addEventListener('click', () => {
-                smoothScroll(scrollContainer.scrollLeft + 300, 200);
-            });
+      scrollContainer.addEventListener('touchstart', (e) => {
+        isScrolling = true;
+        startX = e.touches[0].pageX - scrollContainer.offsetLeft;
+        scrollLeft = scrollContainer.scrollLeft;
+      }, { passive: true });
 
-            scrollContainer.addEventListener('scroll', toggleScrollButtons);
-            window.addEventListener('resize', toggleScrollButtons);
-            toggleScrollButtons();
+      scrollContainer.addEventListener('touchmove', (e) => {
+        if (!isScrolling) return;
+        const x = e.touches[0].pageX - scrollContainer.offsetLeft;
+        const walk = (x - startX) * 2;
+        scrollContainer.scrollLeft = scrollLeft - walk;
+      }, { passive: true });
 
-            // Touch events for manual scrolling
-            let isScrolling = false;
-            let startX;
-            let scrollLeft;
-
-            scrollContainer.addEventListener('touchstart', (e) => {
-                isScrolling = true;
-                startX = e.touches[0].pageX - scrollContainer.offsetLeft;
-                scrollLeft = scrollContainer.scrollLeft;
-            }, { passive: true });
-
-            scrollContainer.addEventListener('touchmove', (e) => {
-                if (!isScrolling) return;
-                e.preventDefault();
-                const x = e.touches[0].pageX - scrollContainer.offsetLeft;
-                const walk = (x - startX) * 2;
-                scrollContainer.scrollLeft = scrollLeft - walk;
-            }, { passive: false });
-
-            scrollContainer.addEventListener('touchend', () => {
-                isScrolling = false;
-            });
-        }
-    });
+      scrollContainer.addEventListener('touchend', () => {
+        isScrolling = false;
+      });
+    }
+  });
 });
-    </script>
+</script>

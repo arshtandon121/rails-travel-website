@@ -7,7 +7,7 @@
         before_action :authorize_admin,
     
         def authorize_admin
-          unless current_user.admin?
+          unless current_admin_user.admin?
             redirect_to admin_root_path, alert: "You are not authorized to perform this action."
           end
         end
