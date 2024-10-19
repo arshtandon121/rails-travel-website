@@ -8,9 +8,15 @@ class Camp < ApplicationRecord
   has_many :camp_change_requests
   has_many :camp_coupons
   has_many :user_coupons
+
+  has_many :camp_pictures, dependent: :destroy
+  accepts_nested_attributes_for :camp_pictures, allow_destroy: true
+  
   
   # Enum for categories
   enum category: { camping: 0, adventure_activities: 1, yoga: 2, pre_wedding: 3 }
+  attribute :fixed_price, :decimal
+  attribute :fixed_price_enabled, :boolean, default: false
 
   # Ransackable attributes and associations for search functionality
   def self.ransackable_attributes(auth_object = nil)

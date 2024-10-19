@@ -129,9 +129,9 @@ class CampsController < ApplicationController
       name: camp.name,
       location: camp.person,
       duration: camp.available,
-      images: camp.camp_pic.map { |url| { url: url } },
+      images: camp.camp_pictures.present? ? camp.camp_pictures.map { |picture| { url: url_for(picture.image) } } : [],
       category: camp.category,
-      per_km: camp.details["per_km"].presence || 10
+      description: camp.description
     }
   end
 end

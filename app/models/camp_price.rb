@@ -4,6 +4,8 @@ class CampPrice < ApplicationRecord
   
   validates :camp_id, uniqueness: true, presence: true
 
+  enum pricing_type: { fixed: 0, per_km: 1, sharing: 2 }
+
   # Store the meta column 
   META = [
   :double_price_monday, :double_price_tuesday, :double_price_wednesday, 
@@ -21,30 +23,19 @@ class CampPrice < ApplicationRecord
     define_method(field) do
       meta&.[](field.to_s)
     end
-  
+   
     define_method("#{field}=") do |value|
       self.meta ||= {}
-      self.meta[field.to_s] = value
+      self.meta[field.to_s] = value 
     end
   end
   
-
-
-  # Accessor for pricing type
-  def pricing_type
-    per_km.present? ? 'Per Km' : 'Sharing Based'
-  end
-
-  def pricing_type=(value)
-    @pricing_type = value
-  end
-
   def self.ransackable_associations(auth_object = nil)
     ["camp"]
   end
   
   def self.ransackable_attributes(auth_object = nil)
-    ["camp_id", "created_at", "double_price", "double_sharing_enabled", "id", "per_km", "quad_price", "quad_sharing_enabled", "sharing_enabled", "six_price", "six_sharing_enabled", "triple_price", "triple_sharing_enabled", "updated_at", "week_days"]
+    ["camp_id", "created_at", "double_price", "double_sharing_enabled", "id", "per_km", "quad_price", "quad_sharing_enabled", "sharing_enabled", "six_price", "six_sharing_enabled", "triple_price", "triple_sharing_enabled", "updated_at", "week_days", "fixed_price_eq", "fixed_price_gt","fixed_price_lt","fixed_price_enabled_eq","pricing_type_eq","pricing_type_gt","pricing_type_lt"]
   end
 
   # Method to get prices for a specific sharing type and day of the week
@@ -54,6 +45,7 @@ class CampPrice < ApplicationRecord
 
   # Method to set prices for a specific sharing type and day of the week
   def set_sharing_price_for(sharing_type, day, price)
+    self.meta ||= {}
     self.meta[sharing_type.to_s] ||= {}
     self.meta[sharing_type.to_s][day.to_s] = price
   end
@@ -66,6 +58,6 @@ class CampPrice < ApplicationRecord
   private
 
   def normalize_meta
-    self.meta = meta.deep_stringify_keys
+    self.meta = meta.deep_stringify_keys if meta.present?
   end
 end

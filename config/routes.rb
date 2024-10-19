@@ -66,6 +66,7 @@ Rails.application.routes.draw do
 
   # Admin custom actions for CSV and JSON downloads
   namespace :admin do
+    get 'camps/get_camp_data/:id', to: 'camps#get_camp_data'
     resources :camps do
       collection do
         get :download_csv

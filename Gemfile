@@ -25,6 +25,8 @@ gem 'pry-rails'
 
 gem 'pundit'
 
+gem 'paperclip', '~> 6.1.0'
+
 
 gem 'mini_racer', platforms: :ruby
 

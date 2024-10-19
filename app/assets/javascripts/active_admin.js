@@ -5,11 +5,12 @@
 $(document).ready(function() {
   function togglePricingFields() {
     var selectedType = $('input[name="camp_price[pricing_type]"]:checked').val();
-    if (selectedType === 'Per Km') {
+    $('.per-km-pricing, .fixed-pricing, .sharing-pricing').hide();
+    if (selectedType === 'per_km') {
       $('.per-km-pricing').show();
-      $('.sharing-pricing').hide();
-    } else {
-      $('.per-km-pricing').hide();
+    } else if (selectedType === 'fixed') {
+      $('.fixed-pricing').show();
+    } else if (selectedType === 'sharing') {
       $('.sharing-pricing').show();
     }
   }
@@ -22,11 +23,6 @@ $(document).ready(function() {
 });
 
 
-
-
-
-
-
 document.addEventListener('DOMContentLoaded', () => {
   const campSelect = document.getElementById('camp_change_request_camp_id');
   console.log('Camp select element:', campSelect);
@@ -37,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('Selected camp ID:', campId);
 
       if (campId) {
-        fetch(`/admin/camps/${campId}.json`)
+        fetch(`/admin/camps/get_camp_data/${campId}.json`)
           .then(response => {
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
@@ -72,8 +68,37 @@ document.addEventListener('DOMContentLoaded', () => {
             setInputValue('camp_duration', data.camp_duration);
             setInputValue('location', data.location);
             setInputValue('feature', Array.isArray(data.feature) ? data.feature.join(', ') : data.feature);
-            setInputValue('camp_pic', Array.isArray(data.camp_pic) ? data.camp_pic.join(', ') : data.camp_pic);
 
+            // Handle camp pictures
+            const campPicturesContainer = document.querySelector('.camp_pictures.has_many_container');
+            if (campPicturesContainer) {
+              campPicturesContainer.innerHTML = ''; // Clear existing pictures
+
+              if (Array.isArray(data.camp_pictures) && data.camp_pictures.length > 0) {
+                data.camp_pictures.forEach((picture, index) => {
+                  const fieldset = document.createElement('fieldset');
+                  fieldset.className = 'has_many_fields';
+                  fieldset.innerHTML = `
+                    <legend class="has_many_remove">Camp Picture</legend>
+                    <ol class="has_many_fields">
+                      <li class="input">
+                        <label for="camp_change_request_camp_pictures_attributes_${index}_image">Image</label>
+                        <input type="file" name="camp_change_request[camp_pictures_attributes][${index}][image]" id="camp_change_request_camp_pictures_attributes_${index}_image">
+                      </li>
+                      <li class="input">
+                        <label for="camp_change_request_camp_pictures_attributes_${index}__destroy">Remove this image</label>
+                        <input type="checkbox" name="camp_change_request[camp_pictures_attributes][${index}][_destroy]" id="camp_change_request_camp_pictures_attributes_${index}__destroy">
+                      </li>
+                    </ol>
+                  `;
+                  campPicturesContainer.appendChild(fieldset);
+                });
+              } else {
+                console.log('No camp pictures found or camp_pictures is not an array');
+              }
+            } else {
+              console.warn('Camp pictures container not found');
+            }
           })
           .catch(error => {
             console.error('Error fetching camp data:', error);
@@ -83,4 +108,4 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     console.error('Camp select element not found');
   }
-}); 
+});
