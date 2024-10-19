@@ -468,8 +468,9 @@
         <div class="col-md-8">
           <!-- Camp Image Slider -->
           <div class="camp-image-slider mb-4">
-            <% @camp.camp_pic.each do |pic| %>
-              <img src="<%= pic %>" class="camp-image" alt="<%= @camp.name %>">
+            <% @pics = @camp.camp_pictures.present? ? @camp.camp_pictures.map { |picture| { url: url_for(picture.image) } } : [] %>
+            <% @pics.each_with_index do |image, index| %>
+              <img src="<%= image[:url] %>" alt="<%= @camp.name %>" class="camp-image">
             <% end %>
           </div>
           <!-- Camp Details -->
