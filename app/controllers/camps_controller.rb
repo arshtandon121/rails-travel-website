@@ -17,13 +17,23 @@ class CampsController < ApplicationController
   def get_day_prices
    
     camp = Camp.find(params[:camp_id])
+    camp_price = camp.camp_price
     check_in = Date.parse(params[:check_in])
-    check_out = Date.parse(params[:check_out])
+    check_out = Date.parse(params[:check_out]) unless camp_price.fixed?
     camp_margin = camp.try(:margin).try(:margin).presence || 0
-    total_days = (check_out - check_in).to_i
-  
-    if camp.per_km_field?
-      per_km_price = camp.camp_price.per_km.to_f
+    total_days = camp_price.fixed? ? 1 : (check_out - check_in).to_i
+    
+    if camp_price.fixed?
+      fixed_price = camp_price.fixed_price
+      render json: {
+        day_prices: { "#{check_in.to_s}": fixed_price },
+        total_days: total_days,
+        average_per_person_prices: fixed_price
+      }
+      return
+      
+    elsif camp.per_km_field?
+      per_km_price = camp_price.per_km.to_f
       render json: {
         day_prices: per_km_price,
         total_days: total_days,
@@ -35,7 +45,7 @@ class CampsController < ApplicationController
       prices = {}
   
       sharing_types.each do |type|
-        prices[type] = camp.camp_price.meta.select { |k, v| k.start_with?("#{type}_price_") && v.present? }
+        prices[type] = camp_price.meta.select { |k, v| k.start_with?("#{type}_price_") && v.present? }
       end
   
       day_prices = {}
@@ -79,6 +89,8 @@ class CampsController < ApplicationController
  
 
   def show
+    @camp = Camp.find_by_id(params[:id])
+    @camp_price = @camp.camp_price
     render "camp_details"
   end
 
