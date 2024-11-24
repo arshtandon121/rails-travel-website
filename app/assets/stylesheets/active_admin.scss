@@ -32,4 +32,41 @@
   }
 
 
-  
+  .chosen-container {
+    .chosen-single {
+      height: 30px !important;
+      line-height: 28px !important;
+      background: #fff !important;
+      border: 1px solid #c9d0d6 !important;
+      border-radius: 3px !important;
+      font-size: 0.95em;
+      font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #5E6469 !important;
+      box-shadow: none !important;
+      
+      div b {
+        background-position: 0 4px !important;
+      }
+    }
+    
+    .chosen-drop {
+      border-color: #c9d0d6 !important;
+      box-shadow: none !important;
+    }
+    
+    .chosen-results {
+      li {
+        padding: 8px 6px !important;
+        
+        &.highlighted {
+          background: #5E6469 !important;
+        }
+      }
+    }
+    
+    &.chosen-container-active {
+      .chosen-single {
+        border-color: #99a2aa !important;
+      }
+    }
+  }

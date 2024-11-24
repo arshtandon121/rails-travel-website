@@ -162,6 +162,17 @@
     padding: 1rem;
   }
 
+  .camp-card-link{
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .camp-card-link:hover .camp-details {
+    transition: background-color 0.3s ease;
+     color: white;
+    background-color: #4caf50;
+  }
+
   .camp-rating {
     display: flex;
     align-items: center;
@@ -325,25 +336,34 @@
   <button class="scroll-btn next-btn d-lg-block d-none" aria-label="Next">&gt;</button>
   
   <div class="camp-scroll-container">
-    <% camps.each do |camp| %>
-      <div class="camp-card">
-        <div class="camp-images">
-          <div class="camp-badge">Save INR <%= camp[:discount] %></div>
-         <div class="image-carousel" id="carousel-<%= camp[:id] %>">
-              <% camp[:images].each_with_index do |image, index| %>
-                <img src="<%= image[:url] %>" alt="<%= camp[:name] %>" class="<%= 'active' if index == 0 %>">
-              <% end %>
-            <% if camp[:images].present? %>
-              <button class="prev">&lt;</button>
-              <button class="next">&gt;</button>
+  <% camps.each do |camp| %>
+    <div class="camp-card">
+      <div class="camp-images">
+        <div class="camp-badge">Save INR <%= camp[:discount] %></div>
+       <div class="image-carousel" id="carousel-<%= camp[:id] %>">
+          <% camp[:media].each_with_index do |media, index| %>
+            <% if media[:content_type].start_with?('image/') %>
+              <img src="<%= media[:url] %>" alt="<%= camp[:name] %>" class="<%= 'active' if index == 0 %>">
+            <% elsif media[:content_type].start_with?('video/') %>
+              <video class="<%= 'active' if index == 0 %>" controls>
+                <source src="<%= media[:url] %>" type="<%= media[:content_type] %>">
+                Your browser does not support the video tag.
+              </video>
             <% end %>
-          </div>
-          <div class="carousel-dots" id="dots-<%= camp[:id] %>">
-            <% camp[:images].each_with_index do |_, index| %>
-              <span class="dot <%= 'active' if index == 0 %>" data-index="<%= index %>"></span>
-            <% end %>
-          </div>
+          <% end %>
+          <% if camp[:media].present? %>
+            <button class="prev">&lt;</button>
+            <button class="next">&gt;</button>
+          <% end %>
         </div>
+
+        <div class="carousel-dots" id="dots-<%= camp[:id] %>">
+          <% camp[:images].each_with_index do |_, index| %>
+            <span class="dot <%= 'active' if index == 0 %>" data-index="<%= index %>"></span>
+          <% end %>
+        </div>
+      </div>
+      <%= link_to camp_path(camp[:id]), class: 'camp-card-link' do %>
         <div class="camp-details">
           <h3><%= camp[:name] %></h3>
           <div class="camp-rating">
@@ -354,11 +374,13 @@
           <% if category != "adventure_activities" %>
             <p class="camp-price">INR <%= camp[:price] %></p>
           <% end %>
-          <%= link_to 'View Details', camp_path(camp[:id]), class: 'view-details-btn' %>
+          <span class="view-details-btn">View Details</span>
         </div>
-      </div>
-    <% end %>
-  </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
 
   <% if camps.length > 3 %>
     <%= link_to 'Discover More', camps_category_path(category: category), class: 'discover-more-btn' %>

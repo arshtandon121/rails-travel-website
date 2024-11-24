@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_19_044333) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_24_121601) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -172,6 +172,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_19_044333) do
     t.boolean "sharing_fields", default: false, null: false
     t.boolean "per_person_field", default: false, null: false
     t.boolean "per_km_field", default: false, null: false
+    t.string "camp_name_owner"
   end
 
   create_table "margins", force: :cascade do |t|

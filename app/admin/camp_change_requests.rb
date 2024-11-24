@@ -1,6 +1,6 @@
 ActiveAdmin.register CampChangeRequest do
   permit_params :camp_id, :name, :person, :available, :category, :description,
-                 :camp_duration, :location, :feature, :admin_approved, :user_id, :rating,
+                 :camp_duration, :location, :feature, :admin_approved, :user_id, :rating, :camp_name_owner,
                  camp_pictures_attributes: [:id, :image, :_destroy]
 
   config.batch_actions = true
@@ -110,7 +110,8 @@ ActiveAdmin.register CampChangeRequest do
     f.semantic_errors *f.object.errors
     f.inputs "Camp Change Request Details" do
       f.input :camp_id, as: :select, collection: current_admin_user.admin? ? Camp.all.map { |c| [c.name, c.id] } : current_admin_user.user.camps.map { |c| [c.name, c.id] }
-      f.input :name
+      f.input :name if current_admin_user.admin?
+      f.input :camp_name_owner 
       f.input :person
       f.input :user_id, as: :select, collection: User.all.pluck(:name, :id), input_html: { disabled: true }
       f.input :available
@@ -146,6 +147,7 @@ ActiveAdmin.register CampChangeRequest do
     id_column
     column :camp
     column :name
+    column :camp_name_owner
     column :person
     column :user_id
     column :available
@@ -169,6 +171,7 @@ ActiveAdmin.register CampChangeRequest do
       row :id
       row :camp
       row :name
+      row :camp_name_owner
       row :person
       row :available
       row :category
@@ -190,14 +193,17 @@ ActiveAdmin.register CampChangeRequest do
       end
     end
     panel "Camp Pictures" do
-      table_for camp_change_request.camp_pictures do
+      table_for camp.camp_pictures do
         column :image do |camp_picture|
           if camp_picture.image.attached?
-            image_tag url_for(camp_picture.image), style: 'max-width: 200px; max-height: 200px;'
+            link_to url_for(camp_picture.image), target: "_blank" do
+              image_tag url_for(camp_picture.image), style: 'max-width: 200px; max-height: 200px; cursor: pointer;'
+            end
           end
         end
       end
     end
+    
   end
 
 

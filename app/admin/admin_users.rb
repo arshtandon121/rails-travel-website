@@ -1,4 +1,5 @@
 ActiveAdmin.register AdminUser do
+  
   permit_params :email, :password, :password_confirmation, :role, :guest, :user_id # Include user_id in permit_params
 
   controller do
@@ -35,14 +36,25 @@ ActiveAdmin.register AdminUser do
   end
 
   form do |f|
-    inputs 'Admin User Details' do
-      input :email
-      input :password
-      input :password_confirmation
-      input :role
-      input :guest
-      input :user_id, as: :select, collection: User.pluck(:email, :id), include_blank: true  # Dropdown to select associated user
+    f.semantic_errors
+
+    f.inputs 'Admin User Details' do
+      f.input :email
+      f.input :password
+      f.input :password_confirmation
+      f.input :role
+      f.input :guest, include_blank: false
+      f.input :user_id, 
+        as: :select, 
+        collection: User.pluck(:email, :id),
+        include_blank: false,
+        input_html: { 
+          class: 'chosen-select',
+          data: { placeholder: 'Select User' }
+        }
     end
-    actions
+    
+    f.actions
   end
+
 end

@@ -1,8 +1,8 @@
 ActiveAdmin.register Camp do
   permit_params :name, :person, :available, :category, :user_id,
                 :description, :camp_duration, :location, :feature, :authorized,
-                :rating, :sharing_fields, :per_person_field, :per_km_field,
-                camp_pictures_attributes: [:id, :image, :_destroy]
+                :rating, :sharing_fields, :per_person_field, :per_km_field, :camp_name_owner,
+                camp_pictures_attributes: [:id, :image, :_destroy] 
 
   filter :name
   filter :category
@@ -52,6 +52,7 @@ ActiveAdmin.register Camp do
       
       render json: {
         name: @camp.name,
+        camp_name_owner: @camp.camp_name_owner,
         person: @camp.person,
         user_id: @camp.user_id,
         available: @camp.available,
@@ -72,6 +73,7 @@ ActiveAdmin.register Camp do
     if current_admin_user.admin?
       f.inputs "Camp Details" do
         f.input :name
+        f.input :camp_name_owner
         f.input :person
         f.input :available
         f.input :rating
@@ -89,7 +91,15 @@ ActiveAdmin.register Camp do
 
       f.inputs "Camp Pictures" do
         f.has_many :camp_pictures, allow_destroy: true, new_record: true do |p|
-          p.input :image, as: :file
+          if p.object.image.attached?
+            div class: "current-image-preview" do
+              span "Current Image:"
+              link_to url_for(p.object.image), target: "_blank" do
+                image_tag(url_for(p.object.image), style: 'max-width: 200px; max-height: 200px; margin: 10px;')
+              end
+            end
+          end
+          p.input :image, as: :file, hint: "Upload a new image to replace the current one."
         end
       end
 
@@ -100,7 +110,8 @@ ActiveAdmin.register Camp do
   index do
     selectable_column
     id_column
-    column :name
+    column :name 
+    column :camp_name_owner
     column :person
     column :available
     column :category
@@ -120,6 +131,7 @@ ActiveAdmin.register Camp do
     attributes_table do
       row :id
       row :name
+      row :camp_name_owner
       row :person
       row :user_id
       row :available
@@ -139,10 +151,13 @@ ActiveAdmin.register Camp do
       table_for camp.camp_pictures do
         column :image do |camp_picture|
           if camp_picture.image.attached?
-            image_tag url_for(camp_picture.image), style: 'max-width: 200px; max-height: 200px;'
+            link_to url_for(camp_picture.image), target: "_blank" do
+              image_tag url_for(camp_picture.image), style: 'max-width: 200px; max-height: 200px; cursor: pointer;'
+            end
           end
         end
       end
     end
+    
   end
 end

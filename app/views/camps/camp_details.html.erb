@@ -529,16 +529,26 @@
         <!-- Left Column: Camp Details -->
         <div class="col-md-8">
           <!-- Camp Image Slider -->
-          <div class="camp-image-slider-container">
-              <div class="camp-image-slider">
-                  <% @pics = @camp.camp_pictures.present? ? @camp.camp_pictures.map { |picture| { url: url_for(picture.image) } } : [] %>
-                  <% @pics.each_with_index do |image, index| %>
-                      <img src="<%= image[:url] %>" alt="<%= @camp.name %>" class="camp-image">
-                  <% end %>
-              </div>
-              <button class="slider-arrow slider-arrow-prev">&#10094;</button>
-              <button class="slider-arrow slider-arrow-next">&#10095;</button>
+        <div class="camp-image-slider-container">
+          <div class="camp-image-slider">
+            <% @media.each_with_index do |media, index| %>
+              <% if media[:content_type].start_with?('image/') %>
+                <a href="<%= media[:url] %>" target="_blank">
+                  <img src="<%= media[:url] %>" alt="<%= @camp.name %>" class="camp-image">
+                </a>
+              <% elsif media[:content_type].start_with?('video/') %>
+                <video class="camp-video" controls>
+                  <source src="<%= media[:url] %>" type="<%= media[:content_type] %>">
+                  Your browser does not support the video tag.
+                </video>
+              <% end %>
+            <% end %>
           </div>
+          <button class="slider-arrow slider-arrow-prev">&#10094;</button>
+          <button class="slider-arrow slider-arrow-next">&#10095;</button>
+        </div>
+
+
           <!-- Camp Details -->
           <div class="camp-details purchase-box">
             <h1 class="mb-4"><%= @camp.name %></h1>
@@ -556,7 +566,7 @@
               <div class="row">
                 <div class="col-md-12 mb-3 d-flex justify-content-between">
                   <label for="date-range">Select Dates</label>
-                  <input type="text" id="date-range" class="form-control w-75" placeholder="Select check-in and check-out dates">
+                  <input type="text" id="date-range" class="form-control w-75" placeholder= <%= @camp_price.fixed? ?  "Select Date" : "Select check-in and check-out dates" %> >
                 </div>
               </div>
               <div id="date-error" class="error-message" style="display: none;"></div>

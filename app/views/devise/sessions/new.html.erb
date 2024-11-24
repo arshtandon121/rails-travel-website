@@ -8,12 +8,12 @@
           <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'needs-validation', novalidate: true }) do |f| %>
             <div class="mb-3">
               <%= f.label :email, class: 'form-label' %>
-              <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', required: true %>
+              <%= f.email_field :email,  placeholder: 'Enter your email address',  autofocus: true, autocomplete: "email", class: 'form-control', required: true %>
             </div>
 
             <div class="mb-3">
               <%= f.label :password, class: 'form-label' %>
-              <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', required: true %>
+              <%= f.password_field :password,  placeholder: 'Phone number as Password for First time users',  autocomplete: "current-password", class: 'form-control', required: true %>
             </div>
 
             <% if devise_mapping.rememberable? %>

@@ -11,7 +11,9 @@ ActiveAdmin.setup do |config|
   config.logout_link_path = :destroy_user_session_path
   config.logout_link_method = :delete
 
-
+  config.register_javascript 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'
+  config.register_stylesheet 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css'
+  config.register_javascript 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js'
   # config/initializers/active_admin.rb
 
 # config/initializers/active_admin.rb

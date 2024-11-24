@@ -4,6 +4,7 @@ ActiveAdmin.register Payment do
   permit_params :amount, :booking_id, :camp_id, :payment_details, :status, :user_email, :user_id, :user_name, :user_phone, :payment_cleared_to_camp
 
   controller do
+    helper_method :mask_phone, :mask_email
     before_action :authorize_user, :set_payment_totals
     before_action :authorize_admin, only: [:new, :create, :edit, :destroy]
     
@@ -20,6 +21,18 @@ ActiveAdmin.register Payment do
     end
 
     private
+
+    def mask_phone(phone)
+      return nil unless phone.present?
+      "*****#{phone.last(4)}"
+    end
+
+    def mask_email(email)
+      return nil unless email.present?
+      first = email.split('@').first
+      domain = email.split('@').last
+      "#{first[0]}*****#{first[-1]}@#{domain}"
+    end
 
     def authorize_user
       unless current_admin_user.admin? || current_admin_user.camp_owner?
@@ -47,11 +60,37 @@ ActiveAdmin.register Payment do
     column :booking
     column :camp
     column :payment_details
-    column :status
-    column :user_email
+    column :status if current_admin_user.admin?
+    
+    column :user_email do |payment|
+      if current_admin_user.admin?
+        payment.booking.email
+      else
+        checkin_date = Date.parse(payment.booking.booking_details["check_in_date"]) rescue nil
+        if checkin_date.present? && checkin_date <= Date.today
+          payment.booking.email
+        else
+          mask_email(payment.booking.email)
+        end
+      end
+    end
+    
     column :user
     column :user_name
-    column :user_phone
+    
+    column :user_phone do |payment|
+      if current_admin_user.admin?
+        payment.booking.phone
+      else
+        checkin_date = Date.parse(payment.booking.booking_details["check_in_date"]) rescue nil
+        if checkin_date.present? && checkin_date <= Date.today
+          payment.booking.phone
+        else
+          mask_phone(payment.booking.phone)
+        end
+      end
+    end
+    
     column :payment_cleared_to_camp
     actions
   end
@@ -81,7 +120,7 @@ ActiveAdmin.register Payment do
       row :booking
       row :camp
       row :payment_details
-      row :status
+      row :status  if current_admin_user.admin?
       row :user_email
       row :user
       row :user_name

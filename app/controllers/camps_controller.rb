@@ -141,7 +141,13 @@ class CampsController < ApplicationController
       name: camp.name,
       location: camp.person,
       duration: camp.available,
-      images: camp.camp_pictures.present? ? camp.camp_pictures.map { |picture| { url: url_for(picture.image) } } : [],
+      media: camp.camp_pictures.present? ? 
+        camp.camp_pictures.map do |picture| 
+          { 
+            url: url_for(picture.image), 
+            content_type: picture.image.content_type 
+          } 
+        end : [],
       category: camp.category,
       description: camp.description
     }

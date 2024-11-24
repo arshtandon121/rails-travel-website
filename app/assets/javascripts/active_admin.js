@@ -109,3 +109,15 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('Camp select element not found');
   }
 });
+
+
+
+$(document).ready(function() {
+  // Initialize Chosen
+  $('.chosen-select').chosen({
+    allow_single_deselect: true,
+    no_results_text: 'No matching users found',
+    width: '80%',
+    search_contains: true
+  });
+})
