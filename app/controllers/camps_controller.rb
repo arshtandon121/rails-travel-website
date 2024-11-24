@@ -91,6 +91,7 @@ class CampsController < ApplicationController
   def show
     @camp = Camp.find_by_id(params[:id])
     @camp_price = @camp.camp_price
+    @media = @camp.camp_pictures.present? ? @camp.camp_pictures.map { |picture| { url: url_for(picture.image), content_type: picture.image.content_type } } : []
     render "camp_details"
   end
 

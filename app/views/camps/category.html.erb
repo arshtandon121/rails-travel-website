@@ -4,9 +4,27 @@
   <div class="camp-scroll-container">
     <% @camps.each do |camp| %>
       <div class="camp-card">
-        <div class="camp-images">
-          <div class="camp-badge">Save INR <%= camp[:discount] %></div>
-          <img src="<%= camp[:images].first[:url] %>" alt="<%= camp[:name] %>">
+        <div class="camp-media">
+          <% if camp[:media].present? %>
+            <% first_media = camp[:media].first %>
+            <% if first_media[:content_type].start_with?('image/') %>
+              <a href="<%= first_media[:url] %>" target="_blank" class="media-link">
+                <img src="<%= first_media[:url] %>" alt="<%= camp[:name] %>" class="camp-media-img">
+              </a>
+            <% elsif first_media[:content_type].start_with?('video/') %>
+              <a href="<%= first_media[:url] %>" target="_blank" class="media-link">
+                <video class="camp-media-video" muted>
+                  <source src="<%= first_media[:url] %>" type="<%= first_media[:content_type] %>">
+                  Your browser does not support the video tag.
+                </video>
+              </a>
+            <% end %>
+          <% else %>
+            <img src="default-placeholder.jpg" alt="No media available" class="camp-media-img">
+          <% end %>
+          <% if camp[:discount].present? %>
+            <div class="camp-badge">Save INR <%= camp[:discount] %></div>
+          <% end %>
         </div>
         <div class="camp-details">
           <h3><%= camp[:name] %></h3>
